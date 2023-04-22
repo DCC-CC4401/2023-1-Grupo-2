@@ -16,11 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from finanzapp.views import login1, logeado, register_user
+from finanzapp.views import login1, logeado, register_user, logout_view, main
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('login/', login1, name='login'),
     path('logeado/', logeado, name='logeado'),
     path('register/', register_user, name='register_user'),
+    path('logout/', logout_view, name='logout'),
+    path('main/', main, name='main'),
 ]
