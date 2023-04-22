@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
+from finanzapp.models import User
+
 
 # Create your views here.
 
@@ -23,5 +25,19 @@ def logeado(request):
     return HttpResponse("logeado")
 
 #-------------22/04/23----- Diego y Gonzalo----->
+
 def register_user(request):
-    return render(request,"finanzapp/register_user.html")
+    if request.method == 'GET': #Si estamos cargando la página
+        return render(request, "register_user.html") #Mostrar el template
+
+    elif request.method == 'POST': #Si estamos recibiendo el form de registro
+        #Tomar los elementos del formulario que vienen en request.POST
+        nombre = request.POST['nombre']
+        contraseña = request.POST['contraseña']
+        display = request.POST['display_name']
+
+        #Crear el nuevo usuario
+        user = User.objects.create_user(username=nombre, password=contraseña, display_name=display)
+
+        #Redireccionar la página /tareas
+        return HttpResponseRedirect('/logeado')
