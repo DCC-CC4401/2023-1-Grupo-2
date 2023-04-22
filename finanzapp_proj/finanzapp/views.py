@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from finanzapp.models import User
-
+from finanzapp.forms import RegisterUserForm
 
 # Create your views here.
 
@@ -28,7 +28,8 @@ def logeado(request):
 
 def register_user(request):
     if request.method == 'GET': #Si estamos cargando la página
-        return render(request, "register_user.html") #Mostrar el template
+        form = RegisterUserForm()
+        return render(request, "register_user.html", {"register_form": form}) #Mostrar el template
 
     elif request.method == 'POST': #Si estamos recibiendo el form de registro
         #Tomar los elementos del formulario que vienen en request.POST
