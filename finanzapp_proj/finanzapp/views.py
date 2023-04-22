@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 
 # Create your views here.
 
-
+#-------------22/04/23----- Manuel y Felipe----->
 def login1(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -21,3 +21,7 @@ def login1(request):
 
 def logeado(request):
     return HttpResponse("logeado")
+
+#-------------22/04/23----- Diego y Gonzalo----->
+def register_user(request):
+    return render(request,"finanzapp/register_user.html")

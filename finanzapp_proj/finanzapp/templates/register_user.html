@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Registro</title>
+</head>
+<body>
+   <h1> Registro </h1>
+   <form method="post">
+       {% csrf_token %}
+       <div class="form-group">
+           <label for="nombre_usuario">Nombre de Usuario</label>
+           <input type="text" class="form-control" id=nombre_usuario name="nombre" required>
+       </div>
+
+       <div class="form-group">
+           <label for="contraseña">Contraseña</label>
+           <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+       </div>
+
+        <div class="form-group">
+           <label for="apodo">Apodo</label>
+           <input type="text" class="form-control" id="apodo" name="apodo" required>
+        </div>
+
+        <button type="submit">Crear usuario</button>
+   </form>
+</body>
+</html>
