@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from finanzapp.views import inicio_sesion
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('inicio_sesion/', inicio_sesion),
+
 ]
