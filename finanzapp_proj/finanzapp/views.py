@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
-from finanzapp.models import User
+from finanzapp.models import User, Transaction
 from finanzapp.forms import RegisterUserForm
 
 # Create your views here.
@@ -64,8 +64,14 @@ def main(request): #View principal del usuario
 
 #-----------------------------------------------17:19------>
 
+#---------------27/04/2023--------Diego y Gonzalo---------->
 
-
+def list_transactions(request):
+    if request.user.is_authenticated:
+        transactions = Transaction.objects.filter(user = request.user)
+        return render(request, "listado.html", {"transactions": transactions})
+    else:
+        return HttpResponseRedirect('/login')
 
 
 
