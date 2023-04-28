@@ -76,6 +76,24 @@ def list_transactions(request):
 
 #---------------28/04/2023--------Diego y Gonzalo---------->
 def edit_trans(request, id_transaccion):
-    transaccion= Transaction.objects.filter(id=id_transaccion).first()
-    form = EditTransactionForm(instance = transaccion)
-    return render(request, "edit_trans.html", {"form": form})
+    if request.user.is_authenticated:
+        transaccion= Transaction.objects.filter(id=id_transaccion).first()
+        if transaccion.user == request.user:
+            form = EditTransactionForm(instance = transaccion)
+            return render(request, "edit_trans.html", {"form": form, "transaction": transaccion})
+        else:
+            return HttpResponseRedirect('/list')
+    else:
+        return HttpResponseRedirect('/login')
+
+
+def actualizar_trans(request, id_transaccion):
+    if request.user.is_authenticated:
+        transaccion = Transaction.objects.filter(id=id_transaccion).first()
+        if transaccion.user == request.user:
+            form = EditTransactionForm(request.POST, instance = transaccion)
+            if form.is_valid():
+                form.save()
+            return HttpResponseRedirect("/list")
+    else:
+        return HttpResponseRedirect('/login')

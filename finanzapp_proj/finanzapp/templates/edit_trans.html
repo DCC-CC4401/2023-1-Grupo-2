@@ -6,13 +6,15 @@
 </head>
 <body>
    <h1> Modificar </h1>
-   <form method="post">
+   <form action="/actualizarTrans/{{ transaction.id }}" method="post">
        {% csrf_token %}
        <div class="form-group">
             {{ form.as_p }}
         </div>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit" >Actualizar</button>
+        <a href="/list"><button type="button">Cancelar</button></a>
+
    </form>
 </body>
 </html>

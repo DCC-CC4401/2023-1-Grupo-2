@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from finanzapp.views import login1, logeado, register_user, logout_view, main, list_transactions, edit_trans
+from finanzapp.views import login1, logeado, register_user, logout_view, main, list_transactions, edit_trans, actualizar_trans
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -27,4 +27,5 @@ urlpatterns = [
     path('main/', main, name='main'),
     path('list/', list_transactions, name='list'),
     path('editTrans/<int:id_transaccion>', edit_trans, name='edit_trans'),
+    path('actualizarTrans/<int:id_transaccion>', actualizar_trans, name='actualizar_trans'),
 ]
