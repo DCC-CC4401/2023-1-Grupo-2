@@ -28,7 +28,7 @@
                     <td>{{transaction.description}}</td>
                     <td>{{transaction.date}}</td>
                     <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
-                    <td><a class="btn btn-danger" href="#"> Eliminar </a></td>
+                    <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
                 </tr>
             {% endfor %}
             </tbody>

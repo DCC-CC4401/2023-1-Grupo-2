@@ -66,34 +66,65 @@ def main(request): #View principal del usuario
 
 #---------------27/04/2023--------Diego y Gonzalo---------->
 
+#Función que lista las transacciones de un usuario
 def list_transactions(request):
+    #Si el usuario está autenticado, buscamos sus transacciones
     if request.user.is_authenticated:
         transactions = Transaction.objects.filter(user = request.user)
+        #Le pasamos las transacciones al formulario
         return render(request, "listado.html", {"transactions": transactions})
+    #Si no está autenticado, lo mandamos a login
     else:
         return HttpResponseRedirect('/login')
 
 
 #---------------28/04/2023--------Diego y Gonzalo---------->
+#Función que edita el registro de una transacción
 def edit_trans(request, id_transaccion):
+    #Por motivos de seguridad un usuario no autenticado no puede acceder a el listado
     if request.user.is_authenticated:
         transaccion= Transaction.objects.filter(id=id_transaccion).first()
-        if transaccion.user == request.user:
+        #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
+        #de lo contrario, podría editar el de otra persona
+        if transaccion.user == request.user: 
+            #obtenemos el formulario haciendo llamada a funcion de forms.py
             form = EditTransactionForm(instance = transaccion)
+            #entregamos el formulario editado con su id de transacción para ser llamado en actualizar
             return render(request, "edit_trans.html", {"form": form, "transaction": transaccion})
         else:
             return HttpResponseRedirect('/list')
+    #Si no está autenticado, lo mandamos a login
     else:
         return HttpResponseRedirect('/login')
 
-
+#Función que actualiza una transacción en la base de datos
 def actualizar_trans(request, id_transaccion):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated: #Revisamos si el usuario está autenticado
+        #Obtenemos la transacción con el id buscado
         transaccion = Transaction.objects.filter(id=id_transaccion).first()
+        #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
+        #de lo contrario, podría editar el de otra persona
         if transaccion.user == request.user:
             form = EditTransactionForm(request.POST, instance = transaccion)
-            if form.is_valid():
+            if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
-            return HttpResponseRedirect("/list")
+        #Redirigimos hacia el listado de transacciones
+        return HttpResponseRedirect("/list")
+    #Si no está autenticado, lo mandamos a login
+    else:
+        return HttpResponseRedirect('/login')
+
+        
+#Funcion que elimina registros de transacciones
+def delete_trans(request,id_transaccion):
+    if request.user.is_authenticated:
+        transaccion = Transaction.objects.filter(id=id_transaccion).first()
+        #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
+        #de lo contrario, podría eliminar el de otra persona
+        if transaccion.user == request.user:
+            #Eliminamos y redirigimos al listado de transacciones
+            transaccion.delete()
+        return HttpResponseRedirect("/list")
+    #Si no está autenticado, lo mandamos a login
     else:
         return HttpResponseRedirect('/login')
