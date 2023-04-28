@@ -12,7 +12,6 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col">Tipo</th>
                     <th scope="col">Valor</th>
                     <th scope="col">Descripción</th>
                     <th scope="col">Fecha</th>
@@ -21,10 +20,15 @@
             <tbody>
             {% for transaction in transactions %}
                 <tr>
-                    <td>{{transaction.type}}</td>
-                    <td>{{transaction.amount}}</td>
+                    {% if transaction.type == "spend" %}
+                    <td>-{{transaction.amount}}</td>
+                    {% else %}
+                    <td>+{{transaction.amount}}</td>
+                    {% endif %}
                     <td>{{transaction.description}}</td>
                     <td>{{transaction.date}}</td>
+                    <td><a class="btn btn-warning" href="#"> Editar </a></td>
+                    <td><a class="btn btn-danger" href="#"> Eliminar </a></td>
                 </tr>
             {% endfor %}
             </tbody>
