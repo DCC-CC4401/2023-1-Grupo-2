@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from finanzapp.models import User, Transaction
-from finanzapp.forms import RegisterUserForm
+from finanzapp.forms import RegisterUserForm, EditTransactionForm
 
 # Create your views here.
 
@@ -74,4 +74,8 @@ def list_transactions(request):
         return HttpResponseRedirect('/login')
 
 
-
+#---------------28/04/2023--------Diego y Gonzalo---------->
+def edit_trans(request, id_transaccion):
+    transaccion= Transaction.objects.filter(id=id_transaccion).first()
+    form = EditTransactionForm(instance = transaccion)
+    return render(request, "edit_trans.html", {"form": form})
