@@ -1,7 +1,4 @@
-{% if error_message %}
-<p>{{ error_message }}</p>
-{% endif %}
-
+<h1>Login</h1>
 <form method="post">
     {% csrf_token %}
     <label for="username">Nombre de usuario:</label>
@@ -10,3 +7,6 @@
     <input type="password" name="password" required><br>
     <input type="submit" value="Iniciar sesión">
 </form>
+{% if error_message %}
+<p>{{ error_message }}</p>
+{% endif %}

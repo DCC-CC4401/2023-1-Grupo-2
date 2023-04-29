@@ -16,15 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from finanzapp.views import login1, logeado, register_user, logout_view, main, list_transactions, edit_trans, actualizar_trans, delete_trans
+from finanzapp.views import index, login_1, register, logout_view, list_transactions, edit_trans, actualizar_trans, delete_trans
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls, name='admin'),
-    path('login/', login1, name='login'),
-    path('logeado/', logeado, name='logeado'),
-    path('register/', register_user, name='register_user'),
+    path('login/', login_1, name='login'),
+    path('register/', register, name='register_user'),
     path('logout/', logout_view, name='logout'),
-    path('main/', main, name='main'),
     path('list/', list_transactions, name='list'),
     path('editTrans/<int:id_transaccion>', edit_trans, name='edit_trans'),
     path('actualizarTrans/<int:id_transaccion>', actualizar_trans, name='actualizar_trans'),
