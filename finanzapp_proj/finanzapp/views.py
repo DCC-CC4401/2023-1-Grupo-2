@@ -37,7 +37,7 @@ def register(request):
         #Se crea el nuevo usuario
         user = User.objects.create_user(username=nombre, password=contraseña, display_name=display)
         user.save()
-        #Se redirecciona al usuario a main, que será la pagina principal de la app.
+        #Se redirecciona al usuario a index, que será la pagina principal de la app.
         return redirect('index')
 
 def logout_view(request): #View para cerrar sesión
@@ -111,10 +111,10 @@ def actualizar_trans(request, id_transaccion):
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
         #Redirigimos hacia el listado de transacciones
-        return HttpResponseRedirect("/list")
+        return redirect('list')
     #Si no está autenticado, lo mandamos a login
     else:
-        return HttpResponseRedirect('/login')
+        return redirect('login')
 
         
 #Funcion que elimina registros de transacciones
@@ -126,7 +126,7 @@ def delete_trans(request,id_transaccion):
         if transaccion.user == request.user:
             #Eliminamos y redirigimos al listado de transacciones
             transaccion.delete()
-        return HttpResponseRedirect("/list")
+        return redirect('list')
     #Si no está autenticado, lo mandamos a login
     else:
-        return HttpResponseRedirect('/login')
+        return redirect('login')
