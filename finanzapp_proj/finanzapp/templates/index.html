@@ -1,0 +1,17 @@
+<h1>Ingresa una transacción!</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="type">Tipo:</label>
+    <select name="type" id="type">
+        <option value="spend">Ingreso</option>
+        <option value="deposit">Gasto</option>
+    </select><br>
+    <label for="description">Descripción:</label>
+    <input type="text" name="description" required><br>
+    <label for="amount">Monto:</label>
+    <input type="number" name="amount" required><br>
+    <label for="date">Fecha:</label>
+    <input type="date" name="date" value="{{ today }}" required><br>
+    <input type="submit" value="Agregar">
+</form>
