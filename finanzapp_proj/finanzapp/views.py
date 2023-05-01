@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from finanzapp.models import User, Transaction
 from finanzapp.forms import RegisterUserForm, EditTransactionForm
 from django.utils import timezone
+from django.db.models import Sum
 # Create your views here.
 
 #-------------22/04/23----- Manuel y Felipe----->
@@ -47,11 +48,23 @@ def logout_view(request): #View para cerrar sesión
     
     #Redirigimos al inicio de sesión
     return redirect('login')
+#
+def saldo_disponible(user_id):
+    depositos = Transaction.objects.filter(user_id=user_id, type='deposit').aggregate(Sum('amount'))['amount__sum'] or 0
+    gastos = Transaction.objects.filter(user_id=user_id, type='spend').aggregate(Sum('amount'))['amount__sum'] or 0
+    saldo = depositos - gastos
+    return saldo
 
 def index(request):
+
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return render(request, 'index.html', {'today': timezone.now().strftime("%Y-%m-%d")})
+            user_id= request.user
+            saldo = saldo_disponible(user_id)
+            context = {'saldo': saldo}
+            return render(request, 'index.html', context)
+       # {'today': timezone.now().strftime("%Y-%m-%d")}
+      
         else:
             return redirect('login')
     elif request.method == "POST":
