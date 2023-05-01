@@ -48,21 +48,33 @@ def logout_view(request): #View para cerrar sesión
     
     #Redirigimos al inicio de sesión
     return redirect('login')
-#
+
+
+#-----------------------------------------------12:00------>
+
+#---------------29/04/2023--------Felipe, Lucas y Manuel---------->
+#funcion auxiliar que devuelve el saldo disponible de cierto usuario
 def saldo_disponible(user_id):
+    #esto devuelve el total de montos de transacciones etiquetas como depositos
     depositos = Transaction.objects.filter(user_id=user_id, type='deposit').aggregate(Sum('amount'))['amount__sum'] or 0
+    #esto devuelve el total de montos de transacciones etiquetas como gastos
     gastos = Transaction.objects.filter(user_id=user_id, type='spend').aggregate(Sum('amount'))['amount__sum'] or 0
     saldo = depositos - gastos
+    #devuelve la resta entre depositos y gastos
     return saldo
 
 def index(request):
 
     if request.method == 'GET':
+        #Por motivos de seguridad un usuario no autenticado no puede acceder a el listado
         if request.user.is_authenticated:
             user_id= request.user
+            #se calcula el saldo disponible para el usuario ya logeado
             saldo = saldo_disponible(user_id)
+            #se guarda como diccionario
             context = {'saldo': saldo}
             return render(request, 'index.html', context)
+        #LUCAS ESTE NOS PITIAMOS :(
        # {'today': timezone.now().strftime("%Y-%m-%d")}
       
         else:
