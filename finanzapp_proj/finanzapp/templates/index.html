@@ -6,7 +6,7 @@
 </div>
 
 {% block content %}
-    <h1>Bienvenido(a) {{ user }}</h1>
+    <h1>Bienvenido(a) {{ user.display_name }}</h1>
     <p>Tu saldo disponible es: {{ saldo }}</p>
 {% endblock %}
 <h1>Ingresa una transacción!</h1>
@@ -18,6 +18,15 @@
         <option value="deposit">Ingreso</option>
         <option value="spend">Gasto</option>
     </select><br>
+    
+    {% if categories.count %}
+        <label for="type">Categoria:</label>
+        <select name="type" id="type">
+            {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat.name }}</option>
+            {% endfor %}
+        </select><br>
+    {% endif %}
     <label for="description">Descripción:</label>
     <input type="text" name="description" required><br>
     <label for="amount">Monto:</label>

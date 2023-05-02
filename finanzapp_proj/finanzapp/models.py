@@ -11,6 +11,16 @@ class User(AbstractUser):
     # Presupuesto, opcional
     budget = models.FloatField(blank=True, null=True)
 
+# Categorias 
+class Category(models.Model):
+    # Nombre de la categoria
+    name = models.CharField(max_length=100)
+    # Presupuesto asociado a la categoria, opcional
+    budget = models.FloatField(blank=True)
+    # Usuario que creo la categoría
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="categories", null=True)
+
+
 # Transacciones
 class Transaction(models.Model):
     # Tiene un único usuario asociado
@@ -24,12 +34,4 @@ class Transaction(models.Model):
     amount = models.FloatField(default=0)
     # Fecha de la transacción
     date = models.DateField(default=timezone.now().strftime("%Y-%m-%d"))
-
-# Categorias 
-class Category(models.Model):
-    # Nombre de la categoria
-    name = models.CharField(max_length=100)
-    # Presupuesto asociado a la categoria, opcional
-    budget = models.FloatField(blank=True)
-    # Usuario que creo la categoría
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="categories")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="transactions", blank=True, null=True)

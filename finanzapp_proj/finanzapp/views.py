@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
-from finanzapp.models import User, Transaction
+from finanzapp.models import User, Transaction, Category
 from finanzapp.forms import RegisterUserForm, EditTransactionForm
 from django.utils import timezone
 from django.db.models import Sum
@@ -34,10 +34,12 @@ def register(request):
         nombre = request.POST['nombre']
         contraseña = request.POST['contraseña']
         display = request.POST['display_name']
-
         #Se crea el nuevo usuario
         user = User.objects.create_user(username=nombre, password=contraseña, display_name=display)
         user.save()
+        # Se crea la categoría ninguna por default:
+        category = Category(name="ninguna", budget=0, user=user)
+        category.save()
         #Se redirecciona al usuario a index, que será la pagina principal de la app.
         return redirect('index')
 
@@ -64,29 +66,36 @@ def saldo_disponible(user_id):
     return saldo
 
 def index(request):
-
+    # Cuando se carga la página
     if request.method == 'GET':
         #Por motivos de seguridad un usuario no autenticado no puede acceder a el listado
         if request.user.is_authenticated:
+            # Se recupera el usuario
             user_id= request.user
             #se calcula el saldo disponible para el usuario ya logeado
             saldo = saldo_disponible(user_id)
+            # Se cargan todas las catehorias del usuario
+            categories = Category.objects.filter(user=user_id)
             #se guarda como diccionario
-            context = {'saldo': saldo}
+            context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d")}
+            # Se renderiza la página
             return render(request, 'index.html', context)
-        #LUCAS ESTE NOS PITIAMOS :(
-       # {'today': timezone.now().strftime("%Y-%m-%d")}
-      
+        # Si el usuario no está autenticado, se redirecciona al login
         else:
             return redirect('login')
+    # Cuando se envía el formulario
     elif request.method == "POST":
+        # Se recupera el usuario
         user = request.user
+        # Se recuperan los campos del formulario
         type = request.POST['type']
         description = request.POST['description']
         amount = request.POST['amount']
         date = request.POST['date']
+        # Se crea un objeto transacción
         transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date)
         transaction.save()
+        # Se vuelve a la misma página
         return redirect('index')
 
 #-----------------------------------------------17:19------>
