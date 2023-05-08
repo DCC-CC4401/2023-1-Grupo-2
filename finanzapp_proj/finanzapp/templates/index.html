@@ -20,8 +20,8 @@
     </select><br>
     
     {% if categories.count %}
-        <label for="type">Categoria:</label>
-        <select name="type" id="type">
+        <label for="category">Categoria:</label>
+        <select name="category" id="category">
             {% for cat in categories %}
                 <option value="{{ cat }}">{{ cat.name }}</option>
             {% endfor %}

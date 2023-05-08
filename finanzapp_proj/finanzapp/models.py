@@ -11,6 +11,7 @@ class User(AbstractUser):
     # Presupuesto, opcional
     budget = models.FloatField(blank=True, null=True)
 
+
 # Categorias 
 class Category(models.Model):
     # Nombre de la categoria
@@ -19,7 +20,7 @@ class Category(models.Model):
     budget = models.FloatField(blank=True)
     # Usuario que creo la categoría
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="categories", null=True)
-
+    
 
 # Transacciones
 class Transaction(models.Model):

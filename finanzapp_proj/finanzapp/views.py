@@ -92,8 +92,10 @@ def index(request):
         description = request.POST['description']
         amount = request.POST['amount']
         date = request.POST['date']
+        category = request.POST['category']
+        cat = Category.objects.filter(user=user, name=category).first()
         # Se crea un objeto transacción
-        transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date)
+        transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
         transaction.save()
         # Se vuelve a la misma página
         return redirect('index')
