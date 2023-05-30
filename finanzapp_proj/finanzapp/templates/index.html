@@ -1,15 +1,8 @@
 
-
-<div>
-    <a href="{% url 'list'%}">Transacciones</a>
-    <a href="{% url 'organiza_finanzas' %}">Organiza tus finanzas</a>
-    <a href="{% url 'logout' %}">logout</a>
-</div>
-
+{% extends 'base.html' %}
 {% block content %}
     <h1>Bienvenido(a) {{ user.display_name }}</h1>
     <p>Tu saldo disponible es: {{ saldo }}</p>
-{% endblock %}
 <h1>Ingresa una transacción!</h1>
 
 <form method="post">
@@ -36,3 +29,4 @@
     <input type="date" name="date" value="{{ today }}" required><br>
     <input type="submit" value="Agregar">
 </form>
+{% endblock %}

@@ -1,38 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <title>Listado de transacciones</title>
-</head>
-<body>
-    <div>
-        <a href="{% url 'index'%}">Volver a página principal</a>
-    </div>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th scope="col">Valor</th>
-                    <th scope="col">Descripción</th>
-                    <th scope="col">Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for transaction in transactions %}
-                <tr>
-                    {% if transaction.type == "spend" %}
-                    <td>-{{transaction.amount}}</td>
-                    {% else %}
-                    <td>+{{transaction.amount}}</td>
-                    {% endif %}
-                    <td>{{transaction.description}}</td>
-                    <td>{{transaction.date}}</td>
-                    <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
-                    <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>   
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Valor</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transactions %}
+            <tr>
+                {% if transaction.type == "spend" %}
+                <td>-{{transaction.amount}}</td>
+                {% else %}
+                <td>+{{transaction.amount}}</td>
+                {% endif %}
+                <td>{{transaction.description}}</td>
+                <td>{{transaction.date}}</td>
+                <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
+                <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>   
+{% endblock %}

@@ -1,8 +1,5 @@
-
-<div>
-    <a href="{% url 'index'%}">Volver a página principal</a>
-</div>
-
+{% extends 'base.html' %}
+{% block content %}
 <h1>Organiza tus finanzas!</h1>
 
 <h2>Estas son tus categorias:</h2>
@@ -21,3 +18,4 @@
     <input type="number" name="budget" required><br>
     <input type="submit" value="Agregar">
 </form>
+{% endblock %}
