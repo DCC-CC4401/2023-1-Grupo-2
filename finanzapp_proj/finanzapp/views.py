@@ -166,3 +166,30 @@ def delete_trans(request,id_transaccion):
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
+    
+
+#---------------30/05/2023--------Lucas---------->
+def organize_fin(request):
+    # Si el usuario está autenticado
+    if request.user.is_authenticated:
+        # Recibimos el formulario
+        if request.method == 'POST':
+            # Recuperamos el nombre de la categoría
+            name = request.POST['name']
+            # Recuperamos el presupuesto ingresado
+            budget = request.POST['budget']
+            # Creamos la categoría
+            category = Category.objects.create(name=name, budget=budget, user=request.user)
+            category.save()
+            # Redirigimos al usuario a la vista organiza tus finanzas
+            return redirect('organiza_finanzas')
+        # Si estamos cargando la página
+        else:
+            # Cargamos las categorías del usuario
+            categories = Category.objects.filter(user = request.user)
+            # Cargamos la página
+            return render(request, 'organiza_finanzas.html', {'categories': categories})
+    # Si no está autenticado
+    else:
+        # Se le redirige al login
+        return render(request, 'login.html', {'error_message': 'Nombre de usuario o contraseña incorrectos'})

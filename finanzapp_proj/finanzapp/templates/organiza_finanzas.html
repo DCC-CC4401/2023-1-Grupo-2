@@ -1,0 +1,23 @@
+
+<div>
+    <a href="{% url 'index'%}">Volver a página principal</a>
+</div>
+
+<h1>Organiza tus finanzas!</h1>
+
+<h2>Estas son tus categorias:</h2>
+{% for category in categories %}
+    <h3>{{ category.name }}
+    </h3>
+{% endfor %}
+
+<h2>Agrega una categoria:</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="name">Nombre:</label>
+    <input type="text" name="name" required><br>
+    <label for="name">Presupuesto:</label>
+    <input type="number" name="budget" required><br>
+    <input type="submit" value="Agregar">
+</form>
