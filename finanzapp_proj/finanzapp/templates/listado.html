@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <div>
+    {% for category in transactions %}
+    <div>
+    <h3>{{category.name}}</h3>
     <table>
         <thead>
             <tr>
@@ -10,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for transaction in transactions %}
+        {% for transaction in category.trans %}
             <tr>
                 {% if transaction.type == "spend" %}
                 <td>-{{transaction.amount}}</td>
@@ -25,5 +28,7 @@
         {% endfor %}
         </tbody>
     </table>
+    </div>
+    {% endfor %}
 </div>   
 {% endblock %}
