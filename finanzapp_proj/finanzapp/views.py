@@ -93,7 +93,7 @@ def index(request):
         amount = request.POST['amount']
         date = request.POST['date']
         category = request.POST['category']
-        cat = Category.objects.filter(user=request.user, name=category).first()
+        cat = Category.objects.filter(user=user, name=category).first()
         # Se crea un objeto transacción
         transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
         transaction.save()
@@ -108,11 +108,12 @@ def index(request):
 def list_transactions(request):
     #Si el usuario está autenticado, buscamos sus transacciones
     if request.user.is_authenticated:
+        #Guardamos una lista de diccionarios que contienen el nombre de la categoría y
+        #las transacciones de esa categoría
         cats = Category.objects.filter(user = request.user)
         transactions = []
         for cat in cats:
             transactions.append({'name': cat.name, 'trans': Transaction.objects.filter(category = cat)})
-        print(transactions)
         #Le pasamos las transacciones al formulario
         return render(request, "listado.html", {"transactions": transactions})
     #Si no está autenticado, lo mandamos a login
