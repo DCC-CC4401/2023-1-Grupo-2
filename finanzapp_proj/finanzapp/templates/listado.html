@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <div>
+    <form method="GET" action="{% url 'list' %}">
+        <label for="order">Ordenar por fecha:</label>
+        <select id="order" name="order">
+          <option value="asc">Menor a mayor</option>
+          <option value="desc">Mayor a menor</option>
+        </select>
+        <button type="submit">Ordenar</button>
+      </form>
+      
     {% for category in transactions %}
     <div>
     <h3>{{category.name}}</h3>

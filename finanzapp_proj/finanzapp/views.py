@@ -103,6 +103,7 @@ def index(request):
 #-----------------------------------------------17:19------>
 
 #---------------27/04/2023--------Diego y Gonzalo---------->
+#-------------------------03/06/2023-------Felipe---------------->
 
 #Función que lista las transacciones de un usuario
 def list_transactions(request):
@@ -112,8 +113,22 @@ def list_transactions(request):
         #las transacciones de esa categoría
         cats = Category.objects.filter(user = request.user)
         transactions = []
-        for cat in cats:
-            transactions.append({'name': cat.name, 'trans': Transaction.objects.filter(category = cat)})
+        # Obtener el parámetro de orden seleccionado
+        order = request.GET.get('order')
+        if order == 'asc':
+            for cat in cats:
+                # Ordenar las transacciones de cada categoría por fecha de menor a mayor
+                trans = Transaction.objects.filter(category=cat).order_by('date')
+                transactions.append({'name': cat.name, 'trans': trans})
+        elif order == 'desc':
+            for cat in cats:
+                # Ordenar las transacciones de cada categoría por fecha de mayor a menor
+                trans = Transaction.objects.filter(category=cat).order_by('-date')
+                transactions.append({'name': cat.name, 'trans': trans})
+        else:
+            # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
+            for cat in cats:
+                transactions.append({'name': cat.name, 'trans': Transaction.objects.filter(category=cat)})
         #Le pasamos las transacciones al formulario
         return render(request, "listado.html", {"transactions": transactions})
     #Si no está autenticado, lo mandamos a login
