@@ -131,7 +131,7 @@ def edit_trans(request, id_transaccion):
         #de lo contrario, podría editar el de otra persona
         if transaccion.user == request.user: 
             #obtenemos el formulario haciendo llamada a funcion de forms.py
-            form = EditTransactionForm(instance = transaccion)
+            form = EditTransactionForm(user=request.user, instance = transaccion)
             #entregamos el formulario editado con su id de transacción para ser llamado en actualizar
             return render(request, "edit_trans.html", {"form": form, "transaction": transaccion})
         else:
@@ -149,7 +149,7 @@ def actualizar_trans(request, id_transaccion):
         #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
         #de lo contrario, podría editar el de otra persona
         if transaccion.user == request.user:
-            form = EditTransactionForm(request.POST, instance = transaccion)
+            form = EditTransactionForm(request.POST, instance = transaccion,user=request.user)
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
         #Redirigimos hacia el listado de transacciones
@@ -251,8 +251,8 @@ def actualizar_cat(request, id_categoria):
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
         #Redirigimos hacia el listado de transacciones
-            categories = Category.objects.filter(user = request.user)  
-            return render(request, 'organiza_finanzas.html', {'categories': categories})
+        categories = Category.objects.filter(user = request.user)  
+        return render(request, 'organiza_finanzas.html', {'categories': categories})
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
