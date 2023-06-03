@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Modifica tu transacción!</h1>
+
+
+<h2>Cambia a tu gusto:</h2>
+
+<h1> Modificar </h1>
+<form action="/actualizarCat/{{ transaction.id }}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+         {{ form.as_p }}
+      </div>
+      <button type="submit" >Actualizar</button>
+      <a href="/organiza_tus_finanzas"><button type="button">Cancelar</button></a>
+
+</form>
+{% endblock %}

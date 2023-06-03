@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from finanzapp.models import User, Transaction, Category
-from finanzapp.forms import RegisterUserForm, EditTransactionForm
+from finanzapp.forms import RegisterUserForm, EditTransactionForm, EditCategoryForm
 from django.utils import timezone
 from django.db.models import Sum
 # Create your views here.
@@ -140,6 +140,7 @@ def edit_trans(request, id_transaccion):
     else:
         return redirect('login')
 
+
 #Función que actualiza una transacción en la base de datos
 def actualizar_trans(request, id_transaccion):
     if request.user.is_authenticated: #Revisamos si el usuario está autenticado
@@ -198,3 +199,59 @@ def organize_fin(request):
     else:
         # Se le redirige al login
         return render(request, 'login.html', {'error_message': 'Nombre de usuario o contraseña incorrectos'})
+
+#----------03/06/2023---------Gonzalo--------------->
+#funcion que permite eliminar una categoría
+def delete_cat(request,id_categoria):
+    if request.user.is_authenticated:
+        categoria = Category.objects.filter(id=id_categoria).first()
+        #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
+        #de lo contrario, podría eliminar el de otra persona
+        if categoria.user == request.user:
+            #Eliminamos y redirigimos al listado de transacciones
+            categoria.delete()
+
+        categories = Category.objects.filter(user = request.user)  
+        return render(request, 'organiza_finanzas.html', {'categories': categories})
+    #Si no está autenticado, lo mandamos a login
+    else:
+        return redirect('login')
+
+
+
+#Función que edita el registro de una categoria
+def edit_cat(request, id_categoria):
+    #Por motivos de seguridad un usuario no autenticado no puede acceder a el listado
+    if request.user.is_authenticated:
+        categoria= Category.objects.filter(id=id_categoria).first()
+        #El usuario asociado a la categoria debe ser el mismo que quiere realizar el edit, 
+        #de lo contrario, podría editar el de otra persona
+        if categoria.user == request.user: 
+            #obtenemos el formulario haciendo llamada a funcion de forms.py
+            form = EditCategoryForm(instance = categoria)
+            #entregamos el formulario editado con su id de transacción para ser llamado en actualizar
+            return render(request, "edit_cat.html", {"form": form, "transaction": categoria})
+        else:
+            categories = Category.objects.filter(user = request.user)  
+            return render(request, 'organiza_finanzas.html', {'categories': categories})
+    #Si no está autenticado, lo mandamos a login
+    else:
+        return redirect('login')
+
+
+#Función que actualiza una transacción en la base de datos
+def actualizar_trans(request, id_transaccion):
+    if request.user.is_authenticated: #Revisamos si el usuario está autenticado
+        #Obtenemos la transacción con el id buscado
+        transaccion = Transaction.objects.filter(id=id_transaccion).first()
+        #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
+        #de lo contrario, podría editar el de otra persona
+        if transaccion.user == request.user:
+            form = EditTransactionForm(request.POST, instance = transaccion)
+            if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
+                form.save()
+        #Redirigimos hacia el listado de transacciones
+        return redirect('list')
+    #Si no está autenticado, lo mandamos a login
+    else:
+        return redirect('login')

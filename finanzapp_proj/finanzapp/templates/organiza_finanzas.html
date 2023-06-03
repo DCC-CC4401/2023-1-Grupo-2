@@ -4,8 +4,9 @@
 
 <h2>Estas son tus categorias:</h2>
 {% for category in categories %}
-    <h3>{{ category.name }}
-    </h3>
+    <h3>{{ category.name }}</h3>
+    <td><a class="btn btn-warning" href="/editCat/{{ category.id }}"> Editar </a></td>
+    <td><a class="btn btn-danger" href="/eliminarCat/{{ category.id }}"> Eliminar </a></td>
 {% endfor %}
 
 <h2>Agrega una categoria:</h2>
