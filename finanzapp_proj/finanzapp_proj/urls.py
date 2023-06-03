@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from finanzapp.views import index, login_1, register, logout_view, list_transactions, edit_trans, actualizar_trans, delete_trans, organize_fin, delete_cat, edit_cat
+from finanzapp.views import index, login_1, register, logout_view, list_transactions, edit_trans, actualizar_trans, delete_trans, organize_fin, delete_cat, edit_cat, actualizar_cat
 
 urlpatterns = [
     path('', index, name='index'),
@@ -30,5 +30,6 @@ urlpatterns = [
     path('actualizarTrans/<int:id_transaccion>', actualizar_trans, name='actualizar_trans'),
     path('eliminarTrans/<int:id_transaccion>', delete_trans, name='eliminar_trans'),
     path('eliminarCat/<int:id_categoria>', delete_cat, name='eliminar_cat'),
-    path('editCat/<int:id_categoria>', edit_cat, name='eliminar_cat',)
+    path('editCat/<int:id_categoria>', edit_cat, name='eliminar_cat',),
+    path('actualizarCat/<int:id_categoria>', actualizar_cat, name='actualizar_cat'),
 ]
