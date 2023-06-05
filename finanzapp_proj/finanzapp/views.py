@@ -88,6 +88,7 @@ def index(request):
         # Se recupera el usuario
         user = request.user
         # Se recuperan los campos del formulario
+
         type = request.POST['type']
         description = request.POST['description']
         amount = request.POST['amount']
@@ -103,19 +104,60 @@ def index(request):
 #-----------------------------------------------17:19------>
 
 #---------------27/04/2023--------Diego y Gonzalo---------->
-
+#-------------------------03/06/2023-------Felipe---------------->
+#-------------------------04/06/2023-------Manuel---------------->
 #Función que lista las transacciones de un usuario
 def list_transactions(request):
     #Si el usuario está autenticado, buscamos sus transacciones
     if request.user.is_authenticated:
-        #Guardamos una lista de diccionarios que contienen el nombre de la categoría y
-        #las transacciones de esa categoría
+       
+        #lista de categorias del usuario
         cats = Category.objects.filter(user = request.user)
+
+         # Obtener lista de categorías seleccionadas
+        selected_cats = request.GET.getlist('categories') 
+
         transactions = []
-        for cat in cats:
-            transactions.append({'name': cat.name, 'trans': Transaction.objects.filter(category = cat)})
-        #Le pasamos las transacciones al formulario
-        return render(request, "listado.html", {"transactions": transactions})
+
+        # Obtener el parámetro de orden seleccionado
+        order = request.GET.get('order')
+        #si se seleccionaron categorias  
+        if selected_cats:
+            #recorro cada categoria seleccionada
+            for cat_id in selected_cats:
+                #voy guardando los objetos en cat
+                cat = Category.objects.get(id=cat_id)
+                #reviso orden
+                if order == 'asc':
+                    # Ordenar las transacciones de cada categoría por fecha de menor a mayor
+                    trans = Transaction.objects.filter(category=cat).order_by('date')
+                elif order == 'desc':
+                    # Ordenar las transacciones de cada categoría por fecha de mayor a menor
+                    trans = Transaction.objects.filter(category=cat).order_by('-date')
+                else:
+                    # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
+                    trans = Transaction.objects.filter(category=cat)
+                transactions.append({'name': cat.name, 'trans': trans})
+        
+        # No se seleccionó ninguna categoría, revisar si hay orden o no
+        else:
+            for cat in cats:
+                #reviso orden
+                if order == 'asc':
+                    # Ordenar las transacciones de cada categoría por fecha de menor a mayor
+                    trans = Transaction.objects.filter(category=cat).order_by('date')
+                elif order == 'desc':
+                    # Ordenar las transacciones de cada categoría por fecha de mayor a menor
+                    trans = Transaction.objects.filter(category=cat).order_by('-date')
+                else:
+                    # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
+                    trans = Transaction.objects.filter(category=cat)
+                transactions.append({'name': cat.name, 'trans': trans})
+
+        # Le pasamos las transacciones y categorias al formulario
+        return render(request, "listado.html", {"transactions": transactions, "categories": cats})
+    
+            
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
@@ -173,7 +215,6 @@ def delete_trans(request,id_transaccion):
     else:
         return redirect('login')
     
-
 #---------------30/05/2023--------Lucas---------->
 def organize_fin(request):
     # Si el usuario está autenticado
