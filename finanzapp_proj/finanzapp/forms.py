@@ -21,8 +21,6 @@ class EditTransactionForm(forms.ModelForm):
         self.fields['category'].queryset = Category.objects.filter(user=user)
         self.fields['category'].label_from_instance = lambda obj: obj.name
 
-
-
 class EditCategoryForm(forms.ModelForm):
    class Meta:
       model = Category
