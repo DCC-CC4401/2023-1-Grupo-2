@@ -65,6 +65,14 @@ def saldo_disponible(user_id):
     #devuelve la resta entre depositos y gastos
     return saldo
 
+#Funcion auxiliar que devuelve el saldo de una categoria específica de un usuario
+def saldo_categoría(user_id, cat):
+    budget = cat.budget
+    depositos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    saldo = budget + depositos - gastos
+    return [cat.name, saldo]
+
 def index(request):
     # Cuando se carga la página
     if request.method == 'GET':
@@ -74,10 +82,14 @@ def index(request):
             user_id= request.user
             #se calcula el saldo disponible para el usuario ya logeado
             saldo = saldo_disponible(user_id)
-            # Se cargan todas las catehorias del usuario
+            # Se cargan todas las categorias del usuario
             categories = Category.objects.filter(user=user_id)
+            budgets = []
+            for cat in categories:
+                budgets.append(saldo_categoría(user_id, cat))
+            print(budgets)
             #se guarda como diccionario
-            context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d")}
+            context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
             # Se renderiza la página
             return render(request, 'index.html', context)
         # Si el usuario no está autenticado, se redirecciona al login
