@@ -117,60 +117,46 @@ def index(request):
 #---------------27/04/2023--------Diego y Gonzalo---------->
 #-------------------------03/06/2023-------Felipe---------------->
 #-------------------------04/06/2023-------Manuel---------------->
+#-----------------------------------07/06/2023----------Felipe----->
 #Función que lista las transacciones de un usuario
 def list_transactions(request):
-    #Si el usuario está autenticado, buscamos sus transacciones
     if request.user.is_authenticated:
-       
-        #lista de categorias del usuario
-        cats = Category.objects.filter(user = request.user)
-
-         # Obtener lista de categorías seleccionadas
-        selected_cats = request.GET.getlist('categories') 
-
+        # Obtener categorías del usuario
+        cats = Category.objects.filter(user=request.user)
+        selected_cats = request.GET.getlist('categories')
         transactions = []
 
-        # Obtener el parámetro de orden seleccionado
-        order = request.GET.get('order')
-        #si se seleccionaron categorias  
+        # Obtener parámetros de fecha seleccionados
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
         if selected_cats:
-            #recorro cada categoria seleccionada
             for cat_id in selected_cats:
-                #voy guardando los objetos en cat
                 cat = Category.objects.get(id=cat_id)
-                #reviso orden
-                if order == 'asc':
-                    # Ordenar las transacciones de cada categoría por fecha de menor a mayor
-                    trans = Transaction.objects.filter(category=cat).order_by('date')
-                elif order == 'desc':
-                    # Ordenar las transacciones de cada categoría por fecha de mayor a menor
-                    trans = Transaction.objects.filter(category=cat).order_by('-date')
-                else:
-                    # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
-                    trans = Transaction.objects.filter(category=cat)
-                transactions.append({'name': cat.name, 'trans': trans})
-        
-        # No se seleccionó ninguna categoría, revisar si hay orden o no
-        else:
-            for cat in cats:
-                #reviso orden
-                if order == 'asc':
-                    # Ordenar las transacciones de cada categoría por fecha de menor a mayor
-                    trans = Transaction.objects.filter(category=cat).order_by('date')
-                elif order == 'desc':
-                    # Ordenar las transacciones de cada categoría por fecha de mayor a menor
-                    trans = Transaction.objects.filter(category=cat).order_by('-date')
-                else:
-                    # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
-                    trans = Transaction.objects.filter(category=cat)
+                # Filtrar transacciones por categoría
+                trans = Transaction.objects.filter(category=cat)
+
+                if start_date and end_date:
+                    # Filtrar transacciones por rango de fecha
+                    trans = trans.filter(date__range=[start_date, end_date])
+
                 transactions.append({'name': cat.name, 'trans': trans})
 
-        # Le pasamos las transacciones y categorias al formulario
+        else:
+            for cat in cats:
+                # Filtrar transacciones por categoría
+                trans = Transaction.objects.filter(category=cat)
+
+                if start_date and end_date:
+                    # Filtrar transacciones por rango de fecha
+                    trans = trans.filter(date__range=[start_date, end_date])
+
+                transactions.append({'name': cat.name, 'trans': trans})
+
+        # Pasar las transacciones y categorías a la plantilla
         return render(request, "listado.html", {"transactions": transactions, "categories": cats})
-    
-            
-    #Si no está autenticado, lo mandamos a login
     else:
+        # Si no está autenticado, redirigir al inicio de sesión
         return redirect('login')
 
 

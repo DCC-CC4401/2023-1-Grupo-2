@@ -1,24 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 <div>
-    <form method="GET" action="{% url 'list' %}">
-        <label for="order">Ordenar por fecha:</label>
-        <select id="order" name="order">
-          <option value="asc">Menor a mayor</option>
-          <option value="desc">Mayor a menor</option>
-        </select>
-        <button type="submit">Ordenar</button>
-      </form>
-
-      <form action="{% url 'list' %}" method="GET">
-        <label>Filtrar por categoria:</label><br>
-        {% for category in categories %}
-          <label>
-            <input type="checkbox" name="categories" value="{{ category.id }}"> {{ category.name }}
-          </label><br>
-        {% endfor %}
-        <input type="submit" value="Filtrar">
-      </form>
+  <form method="GET" action="{% url 'list' %}">
+    <label for="start_date">Fecha de inicio:</label>
+    <input type="date" id="start_date" name="start_date">
+    <label for="end_date">Fecha de fin:</label>
+    <input type="date" id="end_date" name="end_date">
+    <button type="submit">Filtrar</button>
+  </form>
+  <form action="{% url 'list' %}" method="GET">
+    <label>Filtrar por categoria:</label><br>
+      {% for category in categories %}
+        <label>
+          <input type="checkbox" name="categories" value="{{ category.id }}"> {{ category.name }}
+        </label><br>
+      {% endfor %}
+    <input type="submit" value="Filtrar">
+  </form>
     
     {% for category in transactions %}
     <div>
