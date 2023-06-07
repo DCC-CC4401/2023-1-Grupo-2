@@ -87,7 +87,6 @@ def index(request):
             budgets = []
             for cat in categories:
                 budgets.append(saldo_categoría(user_id, cat))
-            print(budgets)
             #se guarda como diccionario
             context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
             # Se renderiza la página
