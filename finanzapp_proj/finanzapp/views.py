@@ -70,8 +70,8 @@ def saldo_categoría(user_id, cat):
     budget = cat.budget
     depositos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
     gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
-    saldo = budget + depositos - gastos
-    return [cat.name, saldo]
+    saldo = depositos - gastos
+    return {'name': cat.name, 'amount': saldo, 'valid': (saldo >= -budget)}
 
 def index(request):
     # Cuando se carga la página
