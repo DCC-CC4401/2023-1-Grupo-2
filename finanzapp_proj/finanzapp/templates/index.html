@@ -28,5 +28,17 @@
     <label for="date">Fecha:</label>
     <input type="date" name="date" value="{{ today }}" required><br>
     <input type="submit" value="Agregar">
+
+    <div>
+        <h2>Estados categorías</h2>
+        {% for budget in budgets %}
+            {% if budget.valid %}
+                <p style="color:LimeGreen;">{{budget.name}}: {{budget.amount}}</p>
+            {% else %}
+                <p style="color:red;">{{budget.name}}: {{budget.amount}}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+
 </form>
 {% endblock %}

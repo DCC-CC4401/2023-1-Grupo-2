@@ -65,6 +65,14 @@ def saldo_disponible(user_id):
     #devuelve la resta entre depositos y gastos
     return saldo
 
+#Funcion auxiliar que devuelve el saldo de una categoria específica de un usuario
+def saldo_categoría(user_id, cat):
+    budget = cat.budget
+    depositos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    saldo = depositos - gastos
+    return {'name': cat.name, 'amount': saldo, 'valid': (saldo >= -budget)}
+
 def index(request):
     # Cuando se carga la página
     if request.method == 'GET':
@@ -74,10 +82,13 @@ def index(request):
             user_id= request.user
             #se calcula el saldo disponible para el usuario ya logeado
             saldo = saldo_disponible(user_id)
-            # Se cargan todas las catehorias del usuario
+            # Se cargan todas las categorias del usuario
             categories = Category.objects.filter(user=user_id)
+            budgets = []
+            for cat in categories:
+                budgets.append(saldo_categoría(user_id, cat))
             #se guarda como diccionario
-            context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d")}
+            context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
             # Se renderiza la página
             return render(request, 'index.html', context)
         # Si el usuario no está autenticado, se redirecciona al login
@@ -106,60 +117,46 @@ def index(request):
 #---------------27/04/2023--------Diego y Gonzalo---------->
 #-------------------------03/06/2023-------Felipe---------------->
 #-------------------------04/06/2023-------Manuel---------------->
+#-----------------------------------07/06/2023----------Felipe----->
 #Función que lista las transacciones de un usuario
 def list_transactions(request):
-    #Si el usuario está autenticado, buscamos sus transacciones
     if request.user.is_authenticated:
-       
-        #lista de categorias del usuario
-        cats = Category.objects.filter(user = request.user)
-
-         # Obtener lista de categorías seleccionadas
-        selected_cats = request.GET.getlist('categories') 
-
+        # Obtener categorías del usuario
+        cats = Category.objects.filter(user=request.user)
+        selected_cats = request.GET.getlist('categories')
         transactions = []
 
-        # Obtener el parámetro de orden seleccionado
-        order = request.GET.get('order')
-        #si se seleccionaron categorias  
+        # Obtener parámetros de fecha seleccionados
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
         if selected_cats:
-            #recorro cada categoria seleccionada
             for cat_id in selected_cats:
-                #voy guardando los objetos en cat
                 cat = Category.objects.get(id=cat_id)
-                #reviso orden
-                if order == 'asc':
-                    # Ordenar las transacciones de cada categoría por fecha de menor a mayor
-                    trans = Transaction.objects.filter(category=cat).order_by('date')
-                elif order == 'desc':
-                    # Ordenar las transacciones de cada categoría por fecha de mayor a menor
-                    trans = Transaction.objects.filter(category=cat).order_by('-date')
-                else:
-                    # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
-                    trans = Transaction.objects.filter(category=cat)
-                transactions.append({'name': cat.name, 'trans': trans})
-        
-        # No se seleccionó ninguna categoría, revisar si hay orden o no
-        else:
-            for cat in cats:
-                #reviso orden
-                if order == 'asc':
-                    # Ordenar las transacciones de cada categoría por fecha de menor a mayor
-                    trans = Transaction.objects.filter(category=cat).order_by('date')
-                elif order == 'desc':
-                    # Ordenar las transacciones de cada categoría por fecha de mayor a menor
-                    trans = Transaction.objects.filter(category=cat).order_by('-date')
-                else:
-                    # No se seleccionó un orden válido, obtener todas las transacciones para cada categoría
-                    trans = Transaction.objects.filter(category=cat)
+                # Filtrar transacciones por categoría
+                trans = Transaction.objects.filter(category=cat)
+
+                if start_date and end_date:
+                    # Filtrar transacciones por rango de fecha
+                    trans = trans.filter(date__range=[start_date, end_date])
+
                 transactions.append({'name': cat.name, 'trans': trans})
 
-        # Le pasamos las transacciones y categorias al formulario
+        else:
+            for cat in cats:
+                # Filtrar transacciones por categoría
+                trans = Transaction.objects.filter(category=cat)
+
+                if start_date and end_date:
+                    # Filtrar transacciones por rango de fecha
+                    trans = trans.filter(date__range=[start_date, end_date])
+
+                transactions.append({'name': cat.name, 'trans': trans})
+
+        # Pasar las transacciones y categorías a la plantilla
         return render(request, "listado.html", {"transactions": transactions, "categories": cats})
-    
-            
-    #Si no está autenticado, lo mandamos a login
     else:
+        # Si no está autenticado, redirigir al inicio de sesión
         return redirect('login')
 
 
