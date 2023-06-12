@@ -152,9 +152,14 @@ def list_transactions(request):
                     trans = trans.filter(date__range=[start_date, end_date])
 
                 transactions.append({'name': cat.name, 'trans': trans})
-
+                
+        #debe tener budgets para mostrar el estado
+        budgets = []
+        for cat in cats:
+            budgets.append(saldo_categoría(request.user, cat))  
         # Pasar las transacciones y categorías a la plantilla
-        return render(request, "listado.html", {"transactions": transactions, "categories": cats})
+        return render(request, "listado.html", {"transactions": transactions, "categories": cats, "budgets": budgets})
+
     else:
         # Si no está autenticado, redirigir al inicio de sesión
         return redirect('login')
