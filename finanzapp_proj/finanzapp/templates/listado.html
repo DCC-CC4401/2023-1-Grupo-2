@@ -18,9 +18,19 @@
     <input type="submit" value="Filtrar">
   </form>
     
-    {% for category in transactions %}
-    <div>
-    <h3>{{category.name}}</h3>
+  {% for category in transactions %}
+  <div>
+      <h3>{{ category.name }}</h3>
+      {% for budget in budgets %}
+          {% if category.name == budget.name %}
+              {% if budget.valid %}
+                  <p>Estado de categoria {{ category.name }}: <span style="color: LimeGreen;">{{ budget.amount }}</span></p>
+              {% else %}
+                  <p>Estado de categoria {{ category.name }}: <span style="color: red;"> {{ budget.amount }}</span></p>
+              {% endif %}
+          {% endif %}
+      {% endfor %}
+  </div>
     <table>
         <thead>
             <tr>
