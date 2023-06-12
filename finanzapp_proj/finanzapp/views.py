@@ -246,7 +246,13 @@ def delete_cat(request,id_categoria):
         #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
         #de lo contrario, podría eliminar el de otra persona
         if categoria.user == request.user:
-            #Eliminamos y redirigimos al listado de transacciones
+            #Eliminamos y redirigimos al listado de categorias
+            categoria_ninguna = Category.objects.filter(user=request.user, name="ninguna").first()
+            transacciones = Transaction.objects.filter(category=categoria)
+            for transaccion in transacciones:
+                transaccion.category = categoria_ninguna
+                transaccion.save()
+
             categoria.delete()
 
         categories = Category.objects.filter(user = request.user)  
