@@ -1,44 +1,90 @@
 
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Bienvenido(a) {{ user.display_name }}</h1>
-    <p>Tu saldo disponible es: {{ saldo }}</p>
-<h1>Ingresa una transacción!</h1>
-
-<form method="post">
-    {% csrf_token %}
-    <label for="type">Tipo:</label>
-    <select name="type" id="type">
-        <option value="deposit">Ingreso</option>
-        <option value="spend">Gasto</option>
-    </select><br>
-    
-    {% if categories.count %}
-        <label for="category">Categoria:</label>
-        <select name="category" id="category">
-            {% for cat in categories %}
-                <option value="{{ cat.name }}">{{ cat.name }}</option>
-            {% endfor %}
-        </select><br>
-    {% endif %}
-    <label for="description">Descripción:</label>
-    <input type="text" name="description" required><br>
-    <label for="amount">Monto:</label>
-    <input type="number" name="amount" required><br>
-    <label for="date">Fecha:</label>
-    <input type="date" name="date" value="{{ today }}" required><br>
-    <input type="submit" value="Agregar">
-
-    <div>
-        <h2>Estados categorías</h2>
-        {% for budget in budgets %}
-            {% if budget.valid %}
-                <p style="color:LimeGreen;">{{budget.name}}: {{budget.amount}}</p>
-            {% else %}
-                <p style="color:red;">{{budget.name}}: {{budget.amount}}</p>
-            {% endif %}
-        {% endfor %}
+<section class="container py-5">
+    <section class="container py-5">
+        <div class="container-fluid bg-light py-5">
+            <div class="col-md-6 m-auto text-center">
+                <h1>Bienvenido(a) {{ user.display_name }}</h1>
+            </div>
+            <div class="col-md-6 m-auto text-center">
+                    <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
+                            <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo }}</h2>
+                    </div>
+            </div>
+        </div>
+    </section>
+    <div class="container-fluid bg-light py-5">
+        <div class="col-md-6 m-auto text-center">
+            <h2>Ingresa una transacción!</h2>
+        <div class="container py-5" style="background-color: #8d94bb;">
+                <div class="row py-5">
+                    <form method="post" class="col-md-9 m-auto">
+                        <div class="row">
+                            {% csrf_token %}
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="type">Tipo:</label>
+                                <select name="type" id="type">
+                                    <option value="deposit">Ingreso</option>
+                                    <option value="spend">Gasto</option>
+                                </select><br>
+                            </div>
+                            {% if categories.count %}
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="category">Categoria:</label>
+                                <select name="category" id="category">
+                                    {% for cat in categories %}
+                                        <option value="{{ cat.name }}">{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select><br>
+                            </div> 
+                            {% endif %}
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="description">Descripción:</label>
+                                <input type="text" name="description" required><br>
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="amount">Monto:</label>
+                                <input type="number" name="amount" required><br>
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="date">Fecha:</label>
+                                <input type="date" name="date" value="{{ today }}" required><br>
+                            </div>
+                            <div class="row">
+                                <div class="col text-end mt-2">
+                                    <button type="submit" class="btn bg-dark btn-lg px-3 text-light">Agregar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+    <section class="container py-5">
+        <div class="container-fluid bg-light py-5">
+            <div class="col-md-6 m-auto text-center">
+                <h2>Estados categorías</h2>
+                <div class="row">
+                    {% for budget in budgets %}
+                    <div class="col-md-6 col-lg-3 pb-5">
+                        {% if budget.valid %}
+                            <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
+                                <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount}}</h3>
+                            </div>
+                        {% else %}
+                            <div class="h-100 py-5 shadow" style="background-color: #aa4a4a;">
+                                <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount}}</h3>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                    
+            </div>
+        </div>
+    </section>
+</section>
 
-</form>
 {% endblock %}

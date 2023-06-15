@@ -88,7 +88,7 @@ def index(request):
             for cat in categories:
                 budgets.append(saldo_categoría(user_id, cat))
             #se guarda como diccionario
-            context = {'saldo': saldo, 'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
+            context = {'saldo': saldo,'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
             # Se renderiza la página
             return render(request, 'index.html', context)
         # Si el usuario no está autenticado, se redirecciona al login
