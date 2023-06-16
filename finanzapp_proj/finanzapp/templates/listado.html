@@ -1,61 +1,108 @@
 {% extends 'base.html' %}
 {% block content %}
-<div>
-  <form method="GET" action="{% url 'list' %}">
-    <label for="start_date">Fecha de inicio:</label>
-    <input type="date" id="start_date" name="start_date">
-    <label for="end_date">Fecha de fin:</label>
-    <input type="date" id="end_date" name="end_date">
-    <button type="submit">Filtrar</button>
-  </form>
-  <form action="{% url 'list' %}" method="GET">
-    <label>Filtrar por categoria:</label><br>
-      {% for category in categories %}
-        <label>
-          <input type="checkbox" name="categories" value="{{ category.id }}"> {{ category.name }}
-        </label><br>
-      {% endfor %}
-    <input type="submit" value="Filtrar">
-  </form>
-    
-  {% for category in transactions %}
-  <div>
-      <h3>{{ category.name }}</h3>
-      {% for budget in budgets %}
-          {% if category.name == budget.name %}
-              {% if budget.valid %}
-                  <p>Estado de categoria {{ category.name }}: <span style="color: LimeGreen;">{{ budget.amount }}</span></p>
-              {% else %}
-                  <p>Estado de categoria {{ category.name }}: <span style="color: red;"> {{ budget.amount }}</span></p>
-              {% endif %}
-          {% endif %}
-      {% endfor %}
-  </div>
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">Valor</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for transaction in category.trans %}
-            <tr>
-                {% if transaction.type == "spend" %}
-                <td>-{{transaction.amount}}</td>
-                {% else %}
-                <td>+{{transaction.amount}}</td>
-                {% endif %}
-                <td>{{transaction.description}}</td>
-                <td>{{transaction.date}}</td>
-                <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
-                <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+
+<section class="container py-5">
+    <div class="row">
+
+        <!-- Filtros -->
+
+        <div class="col-lg-3">
+            <div class="container-fluid py-5" style="background-color: #b2b7db;">
+                <h1 class="h2 pb-4">Filtros</h1>
+                <ul class="list-unstyled templatemo-accordion">
+                    <li class="pb-3">
+                        <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                            Fecha
+                            <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                        </a>
+                        <ul class="collapse show list-unstyled pl-3">
+                            <li>
+                                <form method="GET" action="{% url 'list' %}">
+                                    <table>
+                                        <tr>
+                                            <td style="padding-right: 15px;"><label for="start_date">Desde:</label></td>
+                                            <td style="padding-right: 15px;"><input type="date" id="start_date" name="start_date"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding-right: 15px;"><label for="end_date">Hasta:</label></td>
+                                            <td style="padding-right: 15px;"><input type="date" id="end_date" name="end_date"></td>
+                                        </tr>
+                                    </table>
+                                    <input type="submit" value="Filtrar">
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pb-3">
+                        <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                            Categoría
+                            <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                        </a>
+                        <ul class="collapse show list-unstyled pl-3">
+                            <li>
+                                <form action="{% url 'list' %}" method="GET">
+                                    <label>Filtrar por categoria:</label><br>
+                                        {% for category in categories %}
+                                        <label>
+                                            <input type="checkbox" name="categories" value="{{ category.id }}"> {{ category.name }}
+                                        </label><br>
+                                        {% endfor %}
+                                    <input type="submit" value="Filtrar">
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Tablas -->
+
+        <div class="col-lg-9">
+            {% for category in transactions %}
+                <div class="container-fluid bg-light py-1">
+                    <h3>{{ category.name }}</h3>
+                    {% for budget in budgets %}
+                        {% if category.name == budget.name %}
+                            {% if budget.valid %}
+                                <p>Estado de categoria {{ category.name }}: <span style="color: LimeGreen;">{{ budget.amount }}</span></p>
+                            {% else %}
+                                <p>Estado de categoria {{ category.name }}: <span style="color: red;"> {{ budget.amount }}</span></p>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <br>
+                <table style="width:80%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="border-bottom: 1px solid black; ">Valor</th>
+                            <th scope="col" style="border-bottom: 1px solid black; ">Descripción</th>
+                            <th scope="col" style="border-bottom: 1px solid black; ">Fecha</th>
+                            <th scope="col" style="border-bottom: 1px solid black; "></th>
+                            <th scope="col" style="border-bottom: 1px solid black; "></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in category.trans %}
+                            <tr>
+                                {% if transaction.type == "spend" %}
+                                <td>-{{transaction.amount}}</td>
+                                {% else %}
+                                <td>+{{transaction.amount}}</td>
+                                {% endif %}
+                                <td>{{transaction.description}}</td>
+                                <td>{{transaction.date}}</td>
+                                <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
+                                <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br><hr><br>
+                {% endfor %}
+        </div>
+        
     </div>
-    {% endfor %}
-</div>   
+</section>   
 {% endblock %}
