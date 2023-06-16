@@ -8,9 +8,15 @@
                 <h1>Bienvenido(a) {{ user.display_name }}</h1>
             </div>
             <div class="col-md-6 m-auto text-center">
+                {% if budget >= 0 %}
                     <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
                             <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo }}</h2>
                     </div>
+                {% else %}
+                    <div class="h-100 py-5 shadow" style="background-color: #aa4a4a;">
+                        <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo }}</h2>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </section>

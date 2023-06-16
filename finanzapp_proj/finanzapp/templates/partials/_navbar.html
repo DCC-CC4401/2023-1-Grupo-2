@@ -1,6 +1,6 @@
 {% load static %}
 <!-- Navbar Start -->
-<nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
+<!-- <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
     <div class="container text-light">
         <div class="w-100 d-flex justify-content-between">
             <div>
@@ -17,9 +17,9 @@
             </div>
         </div>
     </div>
-</nav>
+</nav> -->
 <!-- Header -->
-<nav class="navbar navbar-expand-lg navbar-light shadow">
+<nav class="navbar navbar-expand-lg bg-dark navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
 
         <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'index' %}">
@@ -34,16 +34,16 @@
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                        <a class="nav-link text-light" href="{% url 'index' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'list' %}">Transacciones</a>
+                        <a class="nav-link text-light" href="{% url 'list' %}">Transacciones</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'organiza_finanzas' %}">Organizate</a>
+                        <a class="nav-link text-light" href="{% url 'organiza_finanzas' %}">Organizate</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-link text-light" href="{% url 'logout' %}">Logout</a>
                     </li>
                 </ul>
             </div>

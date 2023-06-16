@@ -6,6 +6,7 @@ from finanzapp.models import User, Transaction, Category
 from finanzapp.forms import RegisterUserForm, EditTransactionForm, EditCategoryForm
 from django.utils import timezone
 from django.db.models import Sum
+import sys
 # Create your views here.
 
 #-------------22/04/23----- Manuel y Felipe----->
@@ -35,7 +36,7 @@ def register(request):
         contraseña = request.POST['contraseña']
         display = request.POST['display_name']
         #Se crea el nuevo usuario
-        user = User.objects.create_user(username=nombre, password=contraseña, display_name=display)
+        user = User.objects.create_user(username=nombre, password=contraseña, display_name=display, budget = sys.float_info.max)
         user.save()
         # Se crea la categoría ninguna por default:
         category = Category(name="ninguna", budget=0, user=user)
@@ -56,21 +57,22 @@ def logout_view(request): #View para cerrar sesión
 
 #---------------29/04/2023--------Felipe, Lucas y Manuel---------->
 #funcion auxiliar que devuelve el saldo disponible de cierto usuario
-def saldo_disponible(user_id):
+def saldo_disponible(user):
+    user_id = user.id
     #esto devuelve el total de montos de transacciones etiquetas como depositos
     depositos = Transaction.objects.filter(user_id=user_id, type='deposit').aggregate(Sum('amount'))['amount__sum'] or 0
     #esto devuelve el total de montos de transacciones etiquetas como gastos
     gastos = Transaction.objects.filter(user_id=user_id, type='spend').aggregate(Sum('amount'))['amount__sum'] or 0
     saldo = depositos - gastos
+    budget = user.budget - gastos
     #devuelve la resta entre depositos y gastos
-    return saldo
+    return saldo, budget
 
 #Funcion auxiliar que devuelve el saldo de una categoria específica de un usuario
 def saldo_categoría(user_id, cat):
     budget = cat.budget
-    depositos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
     gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
-    saldo = budget+(depositos - gastos)
+    saldo = budget - gastos
     return {'name': cat.name, 'amount': saldo, 'valid': (saldo >= 0)}
 
 def index(request):
@@ -79,16 +81,16 @@ def index(request):
         #Por motivos de seguridad un usuario no autenticado no puede acceder a el listado
         if request.user.is_authenticated:
             # Se recupera el usuario
-            user_id= request.user
+            user_id= request.user.id
             #se calcula el saldo disponible para el usuario ya logeado
-            saldo = saldo_disponible(user_id)
+            saldo, budget = saldo_disponible(request.user)
             # Se cargan todas las categorias del usuario
             categories = Category.objects.filter(user=user_id)
             budgets = []
             for cat in categories:
                 budgets.append(saldo_categoría(user_id, cat))
             #se guarda como diccionario
-            context = {'saldo': saldo,'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
+            context = {'saldo': saldo, 'budget': budget,'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
             # Se renderiza la página
             return render(request, 'index.html', context)
         # Si el usuario no está autenticado, se redirecciona al login
@@ -99,7 +101,6 @@ def index(request):
         # Se recupera el usuario
         user = request.user
         # Se recuperan los campos del formulario
-
         type = request.POST['type']
         description = request.POST['description']
         amount = request.POST['amount']
