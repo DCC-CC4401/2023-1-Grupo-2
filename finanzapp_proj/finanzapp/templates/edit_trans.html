@@ -1,13 +1,73 @@
 {% extends 'base.html' %}
-{% block content %}
-<h1> Modificar </h1>
-<form action="/actualizarTrans/{{ transaction.id }}" method="post">
-      {% csrf_token %}
-      <div class="form-group">
-         {{ form.as_p }}
-      </div>
-      <button type="submit" >Actualizar</button>
-      <a href="/list"><button type="button">Cancelar</button></a>
 
-</form>
+{% block content %}
+
+<div class="container py-5">
+  <div class="row py-5">
+    <div class="col-md-9 m-auto">
+      <form class="p-4" style="background-color: #ffffff;" action="/actualizarTrans/{{ transaction.id }}" method="post">
+        {% csrf_token %}
+        <div class="list-unstyled templatemo-accordion custom-accordion">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#typeAccordion" aria-expanded="false" aria-controls="typeAccordion">
+              Tipo
+            </button>
+            <div id="typeAccordion" class="accordion-collapse collapse" aria-labelledby="typeAccordion">
+              <div class="accordion-body">
+                <ul class="list-unstyled">
+                  {% for choice in form.type.field.choices %}
+                    <li>
+                      <input class="form-check-input radio-input" type="radio" name="{{ form.type.html_name }}" id="{{ form.type.id_for_label }}_{{ forloop.counter }}" value="{{ choice.0 }}" {% if choice.0 == form.type.value %}checked{% endif %}>
+                      <label for="{{ form.type.id_for_label }}_{{ forloop.counter }}">{{ choice.1 }}</label>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+
+            <div class="mb-3">
+                  <label for="{{ form.description.id_for_label }}">Descripción:</label>
+                  <div class="form-control mt-1">{{ form.description }}</div>
+            </div>
+
+            <div class="row">
+                  <div class="form-group col-md-6 mb-3">
+                        <label for="{{ form.amount.id_for_label }}">Cantidad:</label>
+                        <div class="another-custom-class">{{ form.amount }}</div>
+                  </div>
+
+                  <div class="form-group col-md-6 mb-3">
+                        <label for="{{ form.date.id_for_label }}">Fecha (Año-Mes-Día):</label>
+                        <div class="another-custom-class">{{ form.date }}</div>
+                  </div>
+                  
+            </div>
+            <div class="list-unstyled templatemo-accordion custom-accordion">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#categoryAccordion" aria-expanded="false" aria-controls="categoryAccordion">
+                    Categoría
+                  </button>
+                  <div id="categoryAccordion" class="accordion-collapse collapse" aria-labelledby="categoryAccordion">
+                    <div class="accordion-body">
+                      <form>
+                        {% for choice in form.category.field.choices %}
+                          <div class="form-check">
+                            <input class="form-check-input radio-input" type="radio" name="{{ form.category.html_name }}" id="{{ form.category.id_for_label }}_{{ forloop.counter }}" value="{{ choice.0 }}" {% if choice.0 == form.category.value %}checked{% endif %}>
+                            <label class="form-check-label" for="{{ form.category.id_for_label }}_{{ forloop.counter }}">
+                              {{ choice.1 }}
+                            </label>
+                          </div>
+                        {% endfor %}
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                
+        <button type="submit" class="btn bg-dark btn-lg px-3 text-light">Actualizar</button>
+        <a href="/list"><button type="button" class="btn bg-dark btn-lg px-3 text-light">Cancelar</button></a>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

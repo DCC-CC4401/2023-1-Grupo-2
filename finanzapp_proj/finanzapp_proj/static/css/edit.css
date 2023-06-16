@@ -1,0 +1,9 @@
+.custom-accordion .accordion-button {
+    background-color: transparent;
+    color: black;
+  }
+  
+  .custom-accordion .accordion-collapse {
+    background-color: white;
+  }
+  
