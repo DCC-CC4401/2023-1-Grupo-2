@@ -1,29 +1,53 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1>Organiza tus finanzas!</h1>
+<div style="margin-top: 20px;"></div>
+<div class="col-md-6 m-auto text-center">
+    <h1>Organiza tus categorías!</h1>
 
-<h2>Estas son tus categorias:</h2>
-<table>
-    {% for category in categories %}
-        {% if category.name != "ninguna" %}
-        <tr>
-            <td>{{ category.name }}</td>
-            <td><a class="btn btn-warning" href="/editCat/{{ category.id }}">Editar</a></td>
-            <td><a class="btn btn-danger" href="/eliminarCat/{{ category.id }}">Eliminar</a></td>
-        </tr>
-        {% endif %}
-    {% endfor %}
-</table>
+    <div class="container-fluid bg-light py-5">
+    <h2>Estas son tus categorías:</h2>
+    <div style="margin-top: 20px;"></div>
+        <table class="col-md-6 m-auto text-center">
+            {% for category in categories %}
+            {% if category.name != "ninguna" %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td><a class="btn btn-warning" href="/editCat/{{ category.id }}">Editar</a></td>
+                <td><a class="btn btn-danger" href="/eliminarCat/{{ category.id }}">Eliminar</a></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div style="margin-top: 20px;"></div>
+    <div class="container-fluid bg-light py-5">
 
+        <h2>Agrega una categoría:</h2>
+        <div style="margin-top: 20px;"></div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="form-group col-md-6 mb-3">
+                    <label for="name">Nombre:</label>
+                    <div class="another-custom-class">
+                        <input type="text" name="name" required>
+                    </div>
+                </div>
 
-<h2>Agrega una categoria:</h2>
+                <div class="form-group col-md-6 mb-3">
+                    <label for="budget">Presupuesto:</label>
+                    <div class="another-custom-class">
+                        <input type="number" name="budget" required>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 20px;"></div>
+            <input type="submit" value="Agregar">
+        </form>
+    </div>
+</div>
 
-<form method="post">
-    {% csrf_token %}
-    <label for="name">Nombre:</label>
-    <input type="text" name="name" required><br>
-    <label for="name">Presupuesto:</label>
-    <input type="number" name="budget" required><br>
-    <input type="submit" value="Agregar">
-</form>
+<div style="margin-top: 20px;"></div>
 {% endblock %}
