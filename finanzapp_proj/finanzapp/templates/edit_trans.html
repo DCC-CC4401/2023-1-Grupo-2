@@ -25,12 +25,14 @@
             </div>
           </div>
           
-
-            <div class="mb-3">
-                  <label for="{{ form.description.id_for_label }}">Descripción:</label>
-                  <div class="form-control mt-1">{{ form.description }}</div>
+          <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}">Descripción:</label>
+            <div>
+              <textarea class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.html_name }}" cols="40" rows="6">{{ form.description.value }}</textarea>
             </div>
-
+          </div>
+          
+          
             <div class="row">
                   <div class="form-group col-md-6 mb-3">
                         <label for="{{ form.amount.id_for_label }}">Cantidad:</label>
