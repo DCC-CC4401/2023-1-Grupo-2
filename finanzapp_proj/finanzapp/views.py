@@ -189,6 +189,7 @@ def edit_trans(request, id_transaccion):
 #Función que actualiza una transacción en la base de datos
 def actualizar_trans(request, id_transaccion):
     if request.user.is_authenticated: #Revisamos si el usuario está autenticado
+        print("hola")
         #Obtenemos la transacción con el id buscado
         transaccion = Transaction.objects.filter(id=id_transaccion).first()
         #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
