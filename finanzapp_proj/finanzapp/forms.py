@@ -7,10 +7,6 @@ class RegisterUserForm(forms.Form):
    display_name = forms.CharField(label="Apodo")
 
 class EditTransactionForm(forms.ModelForm):
-    def __init__(self, user, *args, **kwargs):
-        super(EditTransactionForm, self).__init__(*args, **kwargs)
-        self.fields['category'].queryset = Category.objects.filter(user=user)
-
     class Meta:
         model = Transaction
         fields = ["type", "description", "amount", "date", "category"]

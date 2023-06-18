@@ -189,6 +189,7 @@ def edit_trans(request, id_transaccion):
 #Función que actualiza una transacción en la base de datos
 def actualizar_trans(request, id_transaccion):
     if request.user.is_authenticated: #Revisamos si el usuario está autenticado
+        print("hola")
         #Obtenemos la transacción con el id buscado
         transaccion = Transaction.objects.filter(id=id_transaccion).first()
         #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
@@ -300,9 +301,7 @@ def actualizar_cat(request, id_categoria):
             form = EditCategoryForm(request.POST, instance = categoria)
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
-        #Redirigimos hacia el listado de transacciones
-        categories = Category.objects.filter(user = request.user)  
-        return render(request, 'organiza_finanzas.html', {'categories': categories})
+                return redirect('organiza_finanzas')
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
