@@ -1,12 +1,31 @@
-<h1>Login</h1>
-<form method="post">
-    {% csrf_token %}
-    <label for="username">Nombre de usuario:</label>
-    <input type="text" name="username" required><br>
-    <label for="password">Contraseña:</label>
-    <input type="password" name="password" required><br>
-    <input type="submit" value="Iniciar sesión">
-</form>
+{% extends 'base.html' %}
+{% block content %}
+<div style="margin-top: 20px;"></div> 
+<div class="container py-5">
+    <div class="row py-5">
+        <div class="col-md-9 m-auto">
+            <h1>Inicia Sesión</h1>
+            <form class="p-4" style="background-color: #ffffff;" method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="username" class="col-form-label">Nombre de usuario:</label>
+                        <input type="text" name="username" class="form-control" required>
+                        <div class="another-custom-class">{{ form.name }}</div>
+                    </div>
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="password" class="col-form-label">Contraseña:</label>
+                        <input type="password" name="password" class="form-control" required>
+                        <div class="another-custom-class">{{ form.name }}</div>
+                    </div>
+                </div>
+                <input type="submit" value="Iniciar sesión" class="btn bg-dark btn-lg px-3 text-light">
+            </form>
+        </div>
+    </div>
+</div>
+<div style="margin-top: 200px;"></div> 
 {% if error_message %}
-<p>{{ error_message }}</p>
+    <p>{{ error_message }}</p>
 {% endif %}
+{% endblock %}
