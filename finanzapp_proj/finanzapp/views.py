@@ -300,9 +300,7 @@ def actualizar_cat(request, id_categoria):
             form = EditCategoryForm(request.POST, instance = categoria)
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
-        #Redirigimos hacia el listado de transacciones
-        categories = Category.objects.filter(user = request.user)  
-        return render(request, 'organiza_finanzas.html', {'categories': categories})
+                return redirect('organiza_finanzas')
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
