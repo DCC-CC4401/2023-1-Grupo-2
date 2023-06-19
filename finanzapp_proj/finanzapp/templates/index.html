@@ -1,5 +1,5 @@
-
 {% extends 'base.html' %}
+{% load humanize %}
 {% block content %}
 <section class="container py-5">
     <section class="container py-5">
@@ -10,11 +10,11 @@
             <div class="col-md-6 m-auto text-center">
                 {% if budget >= 0 %}
                     <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
-                            <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo }}</h2>
+                            <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo|floatformat:0|intcomma }}</h2>
                     </div>
                 {% else %}
                     <div class="h-100 py-5 shadow" style="background-color: #aa4a4a;">
-                        <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo }}</h2>
+                        <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo|floatformat:0|intcomma }}</h2>
                     </div>
                 {% endif %}
             </div>
@@ -77,11 +77,19 @@
                     <div class="col-md-6 col-lg-3 pb-5">
                         {% if budget.valid %}
                             <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
-                                <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount}}</h3>
+                                {% if budget.name == "ninguna" %}
+                                    <h3 class="h5 mt-4 text-center">Ninguna: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                {% else %}
+                                    <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                {% endif %}
                             </div>
                         {% else %}
                             <div class="h-100 py-5 shadow" style="background-color: #aa4a4a;">
-                                <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount}}</h3>
+                                {% if budget.name == "ninguna" %}
+                                    <h3 class="h5 mt-4 text-center">Ninguna: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                {% else %}
+                                    <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>

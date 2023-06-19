@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block content %}
 
 <section class="container py-5">
@@ -60,47 +61,53 @@
 
         <div class="col-lg-9">
             {% for category in transactions %}
-                <div class="container-fluid bg-light py-1">
-                    <h3>{{ category.name }}</h3>
-                    {% for budget in budgets %}
-                        {% if category.name == budget.name %}
-                            {% if budget.valid %}
-                                <p>Estado de categoria {{ category.name }}: <span style="color: LimeGreen;">{{ budget.amount }}</span></p>
-                            {% else %}
-                                <p>Estado de categoria {{ category.name }}: <span style="color: red;"> {{ budget.amount }}</span></p>
-                            {% endif %}
+                {% if category.trans %}
+                    <div class="container-fluid bg-light py-1">
+                        {% if category.name == "ninguna"  %}
+                            <h3>Ninguna</h3>
+                        {% else %}
+                            <h3>{{ category.name }}</h3>
                         {% endif %}
-                    {% endfor %}
-                </div>
-                <br>
-                <table style="width:80%; border-collapse: collapse;">
-                    <thead>
-                        <tr>
-                            <th scope="col" style="border-bottom: 1px solid black; ">Valor</th>
-                            <th scope="col" style="border-bottom: 1px solid black; ">Descripción</th>
-                            <th scope="col" style="border-bottom: 1px solid black; ">Fecha</th>
-                            <th scope="col" style="border-bottom: 1px solid black; "></th>
-                            <th scope="col" style="border-bottom: 1px solid black; "></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for transaction in category.trans %}
-                            <tr>
-                                {% if transaction.type == "spend" %}
-                                <td>-{{transaction.amount}}</td>
+                        {% for budget in budgets %}
+                            {% if category.name == budget.name %}
+                                {% if budget.valid %}
+                                    <p>Estado de categoria: <span style="color: LimeGreen;">{{ budget.amount|floatformat:0|intcomma}}</span></p>
                                 {% else %}
-                                <td>+{{transaction.amount}}</td>
+                                    <p>Estado de categoria: <span style="color: red;"> {{ budget.amount|floatformat:0|intcomma }}</span></p>
                                 {% endif %}
-                                <td>{{transaction.description}}</td>
-                                <td>{{transaction.date}}</td>
-                                <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
-                                <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
-                            </tr>
+                            {% endif %}
                         {% endfor %}
-                    </tbody>
-                </table>
-                <br><hr><br>
-                {% endfor %}
+                    </div>
+                    <br>
+                    <table style="width:80%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="border-bottom: 1px solid black; ">Valor</th>
+                                <th scope="col" style="border-bottom: 1px solid black; ">Descripción</th>
+                                <th scope="col" style="border-bottom: 1px solid black; ">Fecha</th>
+                                <th scope="col" style="border-bottom: 1px solid black; "></th>
+                                <th scope="col" style="border-bottom: 1px solid black; "></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in category.trans %}
+                                <tr>
+                                    {% if transaction.type == "spend" %}
+                                    <td>-{{transaction.amount|floatformat:0|intcomma}}</td>
+                                    {% else %}
+                                    <td>+{{transaction.amount|floatformat:0|intcomma}}</td>
+                                    {% endif %}
+                                    <td>{{transaction.description}}</td>
+                                    <td>{{transaction.date.day}}/{{transaction.date.month}}/{{transaction.date.year}}</td>
+                                    <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
+                                    <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br><hr><br>
+                {% endif %}
+            {% endfor %}
         </div>
         
     </div>
