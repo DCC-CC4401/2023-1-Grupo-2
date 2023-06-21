@@ -72,8 +72,10 @@ def saldo_disponible(user):
 def saldo_categoría(user_id, cat):
     budget = cat.budget
     gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    ingresos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
     saldo = budget - gastos
-    return {'name': cat.name, 'amount': saldo, 'valid': (saldo >= 0)}
+    total = ingresos + budget - gastos
+    return {'name': cat.name, 'amount': saldo, 'valid': (saldo >= 0), 'total': total}
 
 def index(request):
     # Cuando se carga la página
