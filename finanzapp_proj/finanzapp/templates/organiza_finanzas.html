@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 {% block content %}
 <div style="margin-top: 20px;"></div>
 <div class="col-md-6 m-auto text-center">
@@ -45,6 +45,26 @@
             </div>
             <div style="margin-top: 20px;"></div>
             <button type="submit" class="btn bg-dark btn-lg px-3 text-light">Agregar</button>
+        </form>
+    </div>
+
+    <div style="margin-top: 20px;"></div>
+    <div class="container-fluid bg-light py-5 rounded">
+
+        <h2>Edita tu presupuesto total:</h2>
+        <div style="margin-top: 20px;"></div>
+        <form method="post">
+            {% csrf_token %}
+            <!-- <div class="row"> -->
+                <div class="form-group">
+                    <label for="budget">Nuevo presupuesto:</label>
+                    <div class="another-custom-class">
+                        <input name="global_budget" value= "{{ global_budget|floatformat:0|intcomma }}" required>
+                    </div>
+                </div>
+            <!-- </div> -->
+            <div style="margin-top: 20px;"></div>
+            <button type="submit" class="btn bg-dark btn-lg px-3 text-light">Modificar</button>
         </form>
     </div>
 </div>
