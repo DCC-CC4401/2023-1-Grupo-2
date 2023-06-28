@@ -228,20 +228,27 @@ def organize_fin(request):
         # Recibimos el formulario
         if request.method == 'POST':
             # Recuperamos el nombre de la categoría
-            name = request.POST['name']
-            # Recuperamos el presupuesto ingresado
-            budget = request.POST['budget']
-            # Creamos la categoría
-            category = Category.objects.create(name=name, budget=budget, user=request.user)
-            category.save()
-            # Redirigimos al usuario a la vista organiza tus finanzas
-            return redirect('organiza_finanzas')
+            if 'name' and 'budget' in request.POST:
+                name = request.POST['name']
+                # Recuperamos el presupuesto ingresado
+                budget = request.POST['budget']
+                # Creamos la categoría
+                category = Category.objects.create(name=name, budget=budget, user=request.user)
+                category.save()
+                return redirect('organiza_finanzas')
+            if 'global_budget' in request.POST:
+                global_budget = request.POST['global_budget']
+                request.user.budget = float(global_budget.replace(",",""))
+                request.user.save()
+                # Redirigimos al usuario a la vista organiza tus finanzas
+                return redirect('organiza_finanzas')
         # Si estamos cargando la página
         else:
+            global_budget = request.user.budget
             # Cargamos las categorías del usuario
             categories = Category.objects.filter(user = request.user)
             # Cargamos la página
-            return render(request, 'organiza_finanzas.html', {'categories': categories})
+            return render(request, 'organiza_finanzas.html', {'categories': categories, 'global_budget': global_budget})
     # Si no está autenticado
     else:
         # Se le redirige al login
