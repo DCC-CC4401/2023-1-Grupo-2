@@ -2,13 +2,13 @@
 {% load humanize %}
 {% block content %}
 
-<section class="container py-5">
+<section class="container py-5 rounded">
     <div class="row">
 
         <!-- Filtros -->
 
         <div class="col-lg-3">
-            <div class="container-fluid py-5" style="background-color: #b2b7db;">
+            <div class="container-fluid py-5 rounded" style="background-color: #b2b7db;">
                 <h1 class="h2 pb-4">Filtros</h1>
                 <ul class="list-unstyled templatemo-accordion">
                     <li class="pb-3">
@@ -62,7 +62,7 @@
         <div class="col-lg-9">
             {% for category in transactions %}
                 {% if category.trans %}
-                    <div class="container-fluid bg-light py-1">
+                    <div class="container-fluid bg-light py-1 rounded">
                         {% if category.name == "ninguna"  %}
                             <h3>Ninguna</h3>
                         {% else %}

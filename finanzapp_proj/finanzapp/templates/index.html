@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% block content %}
-<section class="container py-5">
-    <section class="container py-5">
-        <div class="container-fluid bg-light py-5">
+<section class="container py-5 rounded">
+    <section class="container py-5 rounded">
+        <div class="container-fluid bg-light py-5 rounded">
             <div class="col-md-6 m-auto text-center">
                 <h1>Bienvenido(a) {{ user.display_name }}</h1>
             </div>
             <div class="col-md-6 m-auto text-center">
                 {% if budget >= 0 %}
-                    <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
+                    <div class="h-100 py-5 shadow rounded" style="background-color: #69bb7e;">
                             <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo|floatformat:0|intcomma }}</h2>
                     </div>
                 {% else %}
-                    <div class="h-100 py-5 shadow" style="background-color: #aa4a4a;">
+                    <div class="h-100 py-5 shadow rounded" style="background-color: #aa4a4a;">
                         <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo|floatformat:0|intcomma }}</h2>
                     </div>
                 {% endif %}
             </div>
         </div>
     </section>
-    <div class="container-fluid bg-light py-5">
+    <div class="container-fluid bg-light py-5 rounded">
         <div class="col-md-6 m-auto text-center">
             <h2>Ingresa una transacción!</h2>
-        <div class="container py-5" style="background-color: #8d94bb;">
+        <div class="container py-5 rounded" style="background-color: #8d94bb;">
                 <div class="row py-5">
                     <form method="post" class="col-md-9 m-auto">
                         <div class="row">
@@ -68,27 +68,39 @@
             </div>
         </div>
     </div>
-    <section class="container py-5">
-        <div class="container-fluid bg-light py-5">
+    <section class="container py-5 rounded">
+        <div class="container-fluid bg-light py-5 rounded">
             <div class="col-md-6 m-auto text-center">
-                <h2>Tus presupuestos:</h2>
+                <h2>Tus categorías:</h2>
                 <div class="row">
                     {% for budget in budgets %}
-                    <div class="col-md-6 col-lg-3 pb-5">
+                    <div class="col-md-6 col-lg-4 pb-5">
                         {% if budget.valid %}
-                            <div class="h-100 py-5 shadow" style="background-color: #69bb7e;">
+                            <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #69bb7e;">
                                 {% if budget.name == "ninguna" %}
-                                    <h3 class="h5 mt-4 text-center">Ninguna: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                    <h2 class="h4 mt-4 text-center">Ninguna:</h2>
+                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
+                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
+                                    <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
                                 {% else %}
-                                    <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                    <h2 class="h4 mt-4 text-center">{{budget.name}}:</h3>
+                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
+                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
+                                    <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
                                 {% endif %}
                             </div>
                         {% else %}
-                            <div class="h-100 py-5 shadow" style="background-color: #aa4a4a;">
+                            <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #aa4a4a;">
                                 {% if budget.name == "ninguna" %}
-                                    <h3 class="h5 mt-4 text-center">Ninguna: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                    <h2 class="h4 mt-4 text-center">Ninguna:</h2>
+                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
+                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
+                                    <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
                                 {% else %}
-                                    <h3 class="h5 mt-4 text-center">{{budget.name}}: {{budget.amount|floatformat:0|intcomma}}</h3>
+                                    <h2 class="h4 mt-4 text-center">{{budget.name}}:</h2>
+                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
+                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
+                                    <h4 class="h5  text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
                                 {% endif %}
                             </div>
                         {% endif %}
