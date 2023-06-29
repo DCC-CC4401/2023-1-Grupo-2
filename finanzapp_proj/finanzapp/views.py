@@ -227,18 +227,24 @@ def organize_fin(request):
     if request.user.is_authenticated:
         # Recibimos el formulario
         if request.method == 'POST':
-            # Recuperamos el nombre de la categoría
+            # Si se tienen como campos a name y budget, es el formulario de categoría
             if 'name' and 'budget' in request.POST:
+                # Recuperamos ambos valores
                 name = request.POST['name']
                 # Recuperamos el presupuesto ingresado
                 budget = request.POST['budget']
                 # Creamos la categoría
                 category = Category.objects.create(name=name, budget=budget, user=request.user)
                 category.save()
+                # Redirigimos al usuario a la vista organiza tus finanzas
                 return redirect('organiza_finanzas')
+            # Si tiene como campo a global_budget era el formulario de presupuesto
             if 'global_budget' in request.POST:
+                # recuperamos el valor
                 global_budget = request.POST['global_budget']
+                # Sacamos las comas del string y actualizamos el valor en el user
                 request.user.budget = float(global_budget.replace(",",""))
+                # guardamos los cambios
                 request.user.save()
                 # Redirigimos al usuario a la vista organiza tus finanzas
                 return redirect('organiza_finanzas')
