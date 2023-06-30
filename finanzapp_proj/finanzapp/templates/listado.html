@@ -68,15 +68,6 @@
                         {% else %}
                             <h3>{{ category.name }}</h3>
                         {% endif %}
-                        {% for budget in budgets %}
-                            {% if category.name == budget.name %}
-                                {% if budget.valid %}
-                                    <p>Estado de categoria: <span style="color: LimeGreen;">{{ budget.amount|floatformat:0|intcomma}}</span></p>
-                                {% else %}
-                                    <p>Estado de categoria: <span style="color: red;"> {{ budget.amount|floatformat:0|intcomma }}</span></p>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
                     </div>
                     <br>
                     <table style="width:80%; border-collapse: collapse;">

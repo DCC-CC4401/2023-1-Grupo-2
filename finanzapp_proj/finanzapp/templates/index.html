@@ -74,37 +74,25 @@
                 <h2>Tus categorías:</h2>
                 <div class="row">
                     {% for budget in budgets %}
-                    <div class="col-md-6 col-lg-4 pb-5">
-                        {% if budget.valid %}
-                            <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #69bb7e;">
-                                {% if budget.name == "ninguna" %}
-                                    <h2 class="h4 mt-4 text-center">Ninguna:</h2>
-                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
-                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
-                                    <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
+                        {% if budget.name != "ninguna" %}
+                            <div class="col-md-6 col-lg-4 pb-5">
+                                {% if budget.valid %}
+                                    <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #69bb7e;">
+                                            <h2 class="h4 mt-4 text-center">{{budget.name}}:</h3>
+                                            <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
+                                            <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
+                                            <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
+                                    </div>
                                 {% else %}
-                                    <h2 class="h4 mt-4 text-center">{{budget.name}}:</h3>
-                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
-                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
-                                    <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
-                                {% endif %}
-                            </div>
-                        {% else %}
-                            <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #aa4a4a;">
-                                {% if budget.name == "ninguna" %}
-                                    <h2 class="h4 mt-4 text-center">Ninguna:</h2>
-                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
-                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
-                                    <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
-                                {% else %}
-                                    <h2 class="h4 mt-4 text-center">{{budget.name}}:</h2>
-                                    <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
-                                    <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
-                                    <h4 class="h5  text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
+                                    <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #aa4a4a;">
+                                            <h2 class="h4 mt-4 text-center">{{budget.name}}:</h2>
+                                            <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
+                                            <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
+                                            <h4 class="h5  text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
+                                    </div>
                                 {% endif %}
                             </div>
                         {% endif %}
-                    </div>
                     {% endfor %}
                 </div>
                     
