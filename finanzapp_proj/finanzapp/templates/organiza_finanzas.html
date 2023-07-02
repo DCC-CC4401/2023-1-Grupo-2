@@ -9,10 +9,19 @@
     <h2>Estas son tus categorías:</h2>
     <div style="margin-top: 20px;"></div>
         <table class="col-md-6 m-auto text-center">
+            <thead>
+                <tr>
+                    <th scope="col" style="border-bottom: 1px solid black; ">Nombre</th>
+                    <th scope="col" style="border-bottom: 1px solid black; ">Presupuesto</th>
+                    <th scope="col" style="border-bottom: 1px solid black; "></th>
+                    <th scope="col" style="border-bottom: 1px solid black; "></th>
+                </tr>
+            </thead>
             {% for category in categories %}
             {% if category.name != "ninguna" %}
             <tr>
                 <td>{{ category.name }}</td>
+                <td>{{ category.budget|floatformat:0|intcomma }}</td>
                 <td><a class="btn btn-warning" href="/editCat/{{ category.id }}">Editar</a></td>
                 <td><a class="btn btn-danger" href="/eliminarCat/{{ category.id }}">Eliminar</a></td>
             </tr>
