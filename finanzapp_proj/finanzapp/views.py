@@ -258,7 +258,7 @@ def organize_fin(request):
     # Si no está autenticado
     else:
         # Se le redirige al login
-        return render(request, 'login.html', {'error_message': 'Nombre de usuario o contraseña incorrectos'})
+        return redirect('login')
 
 #----------03/06/2023---------Gonzalo--------------->
 #funcion que permite eliminar una categoría

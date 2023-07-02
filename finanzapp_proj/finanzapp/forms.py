@@ -2,9 +2,9 @@ from django import forms
 from finanzapp.models import Transaction, Category
 
 class RegisterUserForm(forms.Form):
-   nombre = forms.CharField(label="Nombre de Usuario")
+   nombre = forms.EmailField(label="Correo")
    contraseña = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
-   display_name = forms.CharField(label="Apodo")
+   display_name = forms.CharField(label="Nombre")
 
 class EditTransactionForm(forms.ModelForm):
     class Meta:
