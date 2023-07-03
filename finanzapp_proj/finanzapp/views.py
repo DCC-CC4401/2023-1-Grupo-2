@@ -250,7 +250,9 @@ def organize_fin(request):
                 return redirect('organiza_finanzas')
         # Si estamos cargando la página
         else:
-            global_budget = request.user.budget
+            global_budget = request.user.budget 
+            if global_budget == sys.float_info.max:
+                global_budget = None
             # Cargamos las categorías del usuario
             categories = Category.objects.filter(user = request.user)
             # Cargamos la página

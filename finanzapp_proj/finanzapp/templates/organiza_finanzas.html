@@ -66,10 +66,17 @@
             {% csrf_token %}
             <!-- <div class="row"> -->
                 <div class="form-group">
-                    <label for="budget">Nuevo presupuesto:</label>
+                    {% if global_budget %}
+                    <label for="budget">Cambia tu presupuesto:</label>
+                        <div class="another-custom-class">
+                                <input name="global_budget" value= "{{ global_budget|floatformat:0|intcomma }}" required>
+                        </div>
+                    {% else %}
+                    <label for="budget">No has definido tu presupuesto!:</label>
                     <div class="another-custom-class">
-                        <input name="global_budget" value= "{{ global_budget|floatformat:0|intcomma }}" required>
-                    </div>
+                        <input name="global_budget" type="number" value= "" required>
+                </div>
+                    {% endif %}
                 </div>
             <!-- </div> -->
             <div style="margin-top: 20px;"></div>
