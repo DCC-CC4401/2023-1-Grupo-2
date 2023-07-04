@@ -19,8 +19,9 @@
     
         <div class="form-group col-md-6 mb-3">
           <label for="{{ form.budget.id_for_label }}">Presupuesto:</label>
-          <div class="another-custom-class">{{ form.budget }}</div>
+          <input type="number" class="form-control" id="{{ form.budget.id_for_label }}" name="{{ form.budget.name }}" value="{{ form.budget.value|floatformat:0 }}">
         </div>
+        
       </div>
       <div style="margin-top: 20px;"></div> 
       

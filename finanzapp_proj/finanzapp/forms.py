@@ -18,8 +18,8 @@ class EditTransactionForm(forms.ModelForm):
         self.fields['category'].label_from_instance = lambda obj: obj.name
 
 class EditCategoryForm(forms.ModelForm):
-   class Meta:
-      model = Category
-      fields= ["name", "budget"]
+    class Meta:
+        model = Category
+        fields= ["name", "budget"]
 
 

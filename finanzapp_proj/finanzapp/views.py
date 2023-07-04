@@ -296,9 +296,11 @@ def edit_cat(request, id_categoria):
         #de lo contrario, podría editar el de otra persona
         if categoria.user == request.user: 
             #obtenemos el formulario haciendo llamada a funcion de forms.py
+            budget = int(categoria.budget) if categoria.budget.is_integer() else categoria.budget
             form = EditCategoryForm(instance = categoria)
+            print(categoria.budget)
             #entregamos el formulario editado con su id de transacción para ser llamado en actualizar
-            return render(request, "edit_cat.html", {"form": form, "transaction": categoria})
+            return render(request, "edit_cat.html", {"form": form, "transaction": categoria, "budget": budget})
         else:
             categories = Category.objects.filter(user = request.user)  
             return render(request, 'organiza_finanzas.html', {'categories': categories})
@@ -316,9 +318,12 @@ def actualizar_cat(request, id_categoria):
         #de lo contrario, podría editar el de otra persona
         if categoria.user == request.user:
             form = EditCategoryForm(request.POST, instance = categoria)
-            if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
+            if form.is_valid():
+                print(request.POST)  #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
                 return redirect('organiza_finanzas')
+            else:
+                print(form.errors)
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
