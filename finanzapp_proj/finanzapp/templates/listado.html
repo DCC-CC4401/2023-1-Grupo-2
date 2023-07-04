@@ -89,7 +89,7 @@
                                     <td>+{{transaction.amount|floatformat:0|intcomma}}</td>
                                     {% endif %}
                                     <td>{{transaction.description}}</td>
-                                    <td>{{transaction.date.day}}/{{transaction.date.month}}/{{transaction.date.year}}</td>
+                                    <td>{{ transaction.date|date:"d/m/Y" }}</td>
                                     <td><a class="btn btn-warning" href="/editTrans/{{ transaction.id }}"> Editar </a></td>
                                     <td><a class="btn btn-danger" href="/eliminarTrans/{{ transaction.id }}"> Eliminar </a></td>
                                 </tr>
