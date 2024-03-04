@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from finanzapp.models import User, Transaction, Category
@@ -7,6 +7,7 @@ from finanzapp.forms import RegisterUserForm, EditTransactionForm, EditCategoryF
 from django.utils import timezone
 from django.db.models import Sum
 import sys
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 #-------------22/04/23----- Manuel y Felipe----->
@@ -327,3 +328,28 @@ def actualizar_cat(request, id_categoria):
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
+
+# Función que toma una transacción generada por correo y actualiza la base de datos
+@csrf_exempt
+def add_transaction_email(request):
+    # Estamos recibiendo una transacción nueva
+    if request.method == "POST":
+        # Se recuperan los campos de la request
+        email = request.POST['email'].split('<')[1].split('>')[0]
+        user = User.objects.filter(username=email)[0]
+        amount = request.POST['amount']
+        amount = int(amount.replace('.', '').strip("'"))
+        # Se recuperan los campos del formulario
+        type = "spend"
+        description = request.POST['description'].strip("'")
+        date = request.POST['date'].strip("'")
+        # Se marca como gasto sin categorizar
+        cat = Category.objects.filter(user=user.id, name="ninguna")[0]
+        # Se crea un objeto transacción
+        transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
+        transaction.save()
+        # Logic to update database
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error'}, status=405)
+        
