@@ -2,6 +2,7 @@
 # Exit on error
 set -o errexit
 
+cd finanzapp_proj
 ls
 
 # Modify this line as needed for your package manager (pip, poetry, etc.)
