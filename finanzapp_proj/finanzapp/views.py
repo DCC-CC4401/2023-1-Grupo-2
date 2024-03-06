@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.db.models import Sum
 import sys
 from django.views.decorators.csrf import csrf_exempt
+import json
 # Create your views here.
 
 #-------------22/04/23----- Manuel y Felipe----->
@@ -192,15 +193,17 @@ def edit_trans(request, id_transaccion):
 #Función que actualiza una transacción en la base de datos
 def actualizar_trans(request, id_transaccion):
     if request.user.is_authenticated: #Revisamos si el usuario está autenticado
-        print("hola")
         #Obtenemos la transacción con el id buscado
         transaccion = Transaction.objects.filter(id=id_transaccion).first()
+        print(len(transaccion.description))
         #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
         #de lo contrario, podría editar el de otra persona
         if transaccion.user == request.user:
             form = EditTransactionForm(request.POST, instance = transaccion,user=request.user)
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
+                transaccion = Transaction.objects.filter(id=id_transaccion).first()
+                print(len(transaccion.description))
         #Redirigimos hacia el listado de transacciones
         return redirect('list')
     #Si no está autenticado, lo mandamos a login
@@ -334,21 +337,35 @@ def actualizar_cat(request, id_categoria):
 def add_transaction_email(request):
     # Estamos recibiendo una transacción nueva
     if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get('email')
+        amount = data.get('amount')
+        account = data.get('account')
+        description = data.get('description')
+        date = data.get('date')
         # Se recuperan los campos de la request
-        email = request.POST['email'].split('<')[1].split('>')[0]
+        email = email.split('<')[1].split('>')[0]
         user = User.objects.filter(username=email)[0]
-        amount = request.POST['amount']
-        amount = int(amount.replace('.', '').strip("'"))
+        amount = float(amount.replace('.', '').strip("'"))
         # Se recuperan los campos del formulario
         type = "spend"
-        description = request.POST['description'].strip("'")
-        date = request.POST['date'].strip("'")
+        description = description.strip("'").replace('\n', ' ')
+        print(repr(description))
+        date = date.strip("'")
         # Se marca como gasto sin categorizar
         cat = Category.objects.filter(user=user.id, name="ninguna")[0]
         # Se crea un objeto transacción
-        transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
-        transaction.save()
-        # Logic to update database
+        
+        print(len(Transaction.objects.filter(user=user, description=description, amount=amount, date=date)))
+        if len(Transaction.objects.filter(user=user, amount=amount, description=description, date=date)) == 0:
+            transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
+            transaction.save()
+            print(user, description, amount, date)
+            other = Transaction.objects.filter(user=user, amount=amount,date=date)[0]
+            print(other.user, other.description, other.date, other.amount)
+            print(description == other.description)
+            print(len(description), len(other.description))
+            # Logic to update database
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'}, status=405)
