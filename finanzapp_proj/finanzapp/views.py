@@ -62,22 +62,18 @@ def logout_view(request): #View para cerrar sesión
 def saldo_disponible(user):
     user_id = user.id
     #esto devuelve el total de montos de transacciones etiquetas como depositos
-    depositos = Transaction.objects.filter(user_id=user_id, type='deposit').aggregate(Sum('amount'))['amount__sum'] or 0
     #esto devuelve el total de montos de transacciones etiquetas como gastos
     gastos = Transaction.objects.filter(user_id=user_id, type='spend').aggregate(Sum('amount'))['amount__sum'] or 0
-    saldo = depositos - gastos
     budget = user.budget - gastos
     #devuelve la resta entre depositos y gastos
-    return saldo, budget
+    return budget, gastos
 
 #Funcion auxiliar que devuelve el saldo de una categoria específica de un usuario
 def saldo_categoría(user_id, cat):
     budget = cat.budget
     gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
-    ingresos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
     saldo = budget - gastos
-    total = ingresos + budget - gastos
-    return {'name': cat.name, 'amount': saldo, 'valid': (saldo >= 0), 'total': total}
+    return {'name': cat.name, "id": cat.id, 'amount': saldo, 'valid': (saldo >= 0)}
 
 def index(request):
     # Cuando se carga la página
@@ -87,14 +83,18 @@ def index(request):
             # Se recupera el usuario
             user_id= request.user.id
             #se calcula el saldo disponible para el usuario ya logeado
-            saldo, budget = saldo_disponible(request.user)
+            budget, gastos = saldo_disponible(request.user)
             # Se cargan todas las categorias del usuario
             categories = Category.objects.filter(user=user_id)
             budgets = []
+            positive = []
             for cat in categories:
-                budgets.append(saldo_categoría(user_id, cat))
+                saldo_cat = saldo_categoría(user_id, cat)
+                if saldo_cat["valid"]:
+                    positive.append(saldo_cat)
+                budgets.append(saldo_cat)
             #se guarda como diccionario
-            context = {'saldo': saldo, 'budget': budget,'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets}
+            context = {'budget': budget, "gastos": gastos,'categories': categories, 'today': timezone.now().strftime("%Y-%m-%d"), 'budgets': budgets, "positive": positive}
             # Se renderiza la página
             return render(request, 'index.html', context)
         # Si el usuario no está autenticado, se redirecciona al login
@@ -302,7 +302,6 @@ def edit_cat(request, id_categoria):
             #obtenemos el formulario haciendo llamada a funcion de forms.py
             budget = int(categoria.budget) if categoria.budget.is_integer() else categoria.budget
             form = EditCategoryForm(instance = categoria)
-            print(categoria.budget)
             #entregamos el formulario editado con su id de transacción para ser llamado en actualizar
             return render(request, "edit_cat.html", {"form": form, "transaction": categoria, "budget": budget})
         else:
@@ -331,6 +330,28 @@ def actualizar_cat(request, id_categoria):
     #Si no está autenticado, lo mandamos a login
     else:
         return redirect('login')
+    
+# Función que permite transferir un saldo negativo a otra categoría
+def transfer_debt(request, id_categoria):
+    if request.user.is_authenticated: #Revisamos si el usuario está autenticado
+        if request.method == "GET":
+            user_id= request.user.id
+            categories = Category.objects.filter(user = user_id)
+            category = Category.objects.filter(user = user_id, id = id_categoria).first()
+            saldo_cat = saldo_categoría(user_id, category)
+            positive_cats = {}
+            for c in categories:
+                saldo = saldo_categoría(user_id, c)
+                if saldo["amount"]> 0:
+                    positive_cats[c.name] = {}
+                    positive_cats[c.name]["cat"] = c
+                    positive_cats[c.name]["saldo"] = saldo['amount']
+            for c in positive_cats.values():
+                print(c)
+            context = {"category": id_categoria, "categories": positive_cats, "saldo_cat": saldo_cat}
+            return render(request, 'transfer_debt.html', context)
+    else:
+        return redirect('login')
 
 # Función que toma una transacción generada por correo y actualiza la base de datos
 @csrf_exempt
@@ -350,13 +371,10 @@ def add_transaction_email(request):
         # Se recuperan los campos del formulario
         type = "spend"
         description = description.strip("'").replace('\n', ' ')
-        print(repr(description))
         date = date.strip("'")
         # Se marca como gasto sin categorizar
         cat = Category.objects.filter(user=user.id, name="ninguna")[0]
         # Se crea un objeto transacción
-        
-        print(len(Transaction.objects.filter(user=user, description=description, amount=amount, date=date)))
         if len(Transaction.objects.filter(user=user, amount=amount, description=description, date=date)) == 0:
             transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
             transaction.save()
