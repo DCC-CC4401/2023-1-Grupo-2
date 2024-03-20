@@ -72,7 +72,8 @@ def saldo_disponible(user):
 def saldo_categoría(user_id, cat):
     budget = cat.budget
     gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
-    saldo = budget - gastos
+    ingresos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    saldo = budget - gastos + ingresos
     return {'name': cat.name, "id": cat.id, 'amount': saldo, 'valid': (saldo >= 0)}
 
 def index(request):
@@ -195,7 +196,6 @@ def actualizar_trans(request, id_transaccion):
     if request.user.is_authenticated: #Revisamos si el usuario está autenticado
         #Obtenemos la transacción con el id buscado
         transaccion = Transaction.objects.filter(id=id_transaccion).first()
-        print(len(transaccion.description))
         #El usuario asociado a la transacción debe ser el mismo que quiere realizar el edit, 
         #de lo contrario, podría editar el de otra persona
         if transaccion.user == request.user:
@@ -203,7 +203,6 @@ def actualizar_trans(request, id_transaccion):
             if form.is_valid(): #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
                 transaccion = Transaction.objects.filter(id=id_transaccion).first()
-                print(len(transaccion.description))
         #Redirigimos hacia el listado de transacciones
         return redirect('list')
     #Si no está autenticado, lo mandamos a login
@@ -322,7 +321,6 @@ def actualizar_cat(request, id_categoria):
         if categoria.user == request.user:
             form = EditCategoryForm(request.POST, instance = categoria)
             if form.is_valid():
-                print(request.POST)  #Si los cambios cumplen las restricciones de los campos, guardamos los cambios
                 form.save()
                 return redirect('organiza_finanzas')
             else:
@@ -342,14 +340,28 @@ def transfer_debt(request, id_categoria):
             positive_cats = {}
             for c in categories:
                 saldo = saldo_categoría(user_id, c)
-                if saldo["amount"]> 0:
+                if saldo["amount"]> 0 and c.name != "ninguna":
                     positive_cats[c.name] = {}
                     positive_cats[c.name]["cat"] = c
                     positive_cats[c.name]["saldo"] = saldo['amount']
-            for c in positive_cats.values():
-                print(c)
             context = {"category": id_categoria, "categories": positive_cats, "saldo_cat": saldo_cat}
             return render(request, 'transfer_debt.html', context)
+        elif request.method == "POST":
+            # Si se tienen como campos a name y budget, es el formulario de categoría
+            user_id= request.user.id
+            categories = Category.objects.filter(user = user_id)
+            category = Category.objects.filter(user = user_id, id = id_categoria).first()
+            modifications = request.POST.getlist('amount')
+            i = 0
+            for c in categories:
+                if c.name != 'ninguna':
+                    saldo = saldo_categoría(user_id, c)
+                    if saldo["amount"]> 0:
+                        if modifications[i]:
+                            transaction = Transaction.objects.create(user=request.user, type="spend", description="Transferencia interna", amount=int(modifications[i]), date=timezone.now().strftime("%Y-%m-%d"), category=c)
+                            transaction = Transaction.objects.create(user=request.user, type="deposit", description="Transferencia interna", amount=int(modifications[i]), date=timezone.now().strftime("%Y-%m-%d"), category=category)
+                        i+=1
+            return redirect('/')
     else:
         return redirect('login')
 
@@ -378,11 +390,6 @@ def add_transaction_email(request):
         if len(Transaction.objects.filter(user=user, amount=amount, description=description, date=date)) == 0:
             transaction = Transaction.objects.create(user=user, type=type, description=description, amount=amount, date=date, category=cat)
             transaction.save()
-            print(user, description, amount, date)
-            other = Transaction.objects.filter(user=user, amount=amount,date=date)[0]
-            print(other.user, other.description, other.date, other.amount)
-            print(description == other.description)
-            print(len(description), len(other.description))
             # Logic to update database
         return JsonResponse({'status': 'success'})
     else:

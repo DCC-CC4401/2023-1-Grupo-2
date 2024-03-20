@@ -10,11 +10,13 @@
             <div class="col-md-6 m-auto text-center">
                 {% if budget >= 0 %}
                     <div class="h-100 py-5 shadow rounded" style="background-color: #69bb7e;">
-                            <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo|floatformat:0|intcomma }}</h2>
+                            <h2 class="h5 mt-4 text-center">Tu presupuesto restante es: {{ budget|floatformat:0|intcomma }}</h2>
+                            <h2 class="h5 mt-4 text-center">Haz gastado: {{ gastos|floatformat:0|intcomma }}</h2>
                     </div>
                 {% else %}
                     <div class="h-100 py-5 shadow rounded" style="background-color: #aa4a4a;">
-                        <h2 class="h5 mt-4 text-center">Tu saldo disponible es: {{ saldo|floatformat:0|intcomma }}</h2>
+                        <h2 class="h5 mt-4 text-center">Tu presupuesto restante es: {{ budget|floatformat:0|intcomma }}</h2>
+                        <h2 class="h5 mt-4 text-center">Has gastado: {{ gastos|floatformat:0|intcomma }}</h2>
                     </div>
                 {% endif %}
             </div>
@@ -77,19 +79,20 @@
                         {% if budget.name != "ninguna" %}
                             <div class="col-md-6 col-lg-4 pb-5">
                                 {% if budget.valid %}
-                                    <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #69bb7e;">
+                                    <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #69bb7e;" onclick="window.location='{% url 'list' %}?categories={{ budget.id }}';">
                                             <h2 class="h4 mt-4 text-center">{{budget.name}}:</h3>
-                                            <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
-                                            <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
-                                            <h4 class="h5 text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
+                                            <h4 class="h5 mt-4 text-center">Saldo: {{budget.amount|floatformat:0|intcomma}}</h4>
                                     </div>
+                                
                                 {% else %}
-                                    <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #aa4a4a;">
+                                    <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #aa4a4a;" onclick="window.location='{% url 'list' %}?categories={{ budget.id }}';">
                                             <h2 class="h4 mt-4 text-center">{{budget.name}}:</h2>
-                                            <h4 class="h5 mt-4 text-center">Saldo: {{budget.total|floatformat:0|intcomma}}</h4>
-                                            <h4 class="h5 mt-4 text-center">Presupuesto restante:</h4>
-                                            <h4 class="h5  text-center">{{budget.amount|floatformat:0|intcomma}}</h4>
+                                            <h4 class="h5 mt-4 text-center">Saldo: {{budget.amount|floatformat:0|intcomma}}</h4>
+                                            {% if positive%}
+                                                <td><a class="btn btn-warning" href="/transferDebt/{{ budget.id }}">Trasferir</a></td>
+                                            {% endif %}
                                     </div>
+                                
                                 {% endif %}
                             </div>
                         {% endif %}

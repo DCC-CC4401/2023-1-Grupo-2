@@ -8,7 +8,7 @@
 
       <h2>Transfiere tu deuda: {{ saldo_cat.amount|floatformat:0|intcomma }}</h2>
 
-  <form class="p-4" style="background-color: #ffffff;" action="/actualizarCat/{{ transaction.id }}" method="post">
+  <form class="p-4" style="background-color: #ffffff;" action="/transferDebt/{{ category }}" method="post">
       {% csrf_token %}
     
       <div class="accordion-item">
@@ -24,7 +24,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="{{ category.cat.id }}">{{ category.cat.name }} ({{category.saldo|floatformat:0|intcomma }}):</label>
-                  <input type="number" class="form-control" id="{{ category.cat.id }}" name="amount" value="" required>
+                  <input type="number" class="form-control" id="{{ category.cat.id }}" name="amount" value="">
                 </div>
               </div>
               {% endfor %}
@@ -37,7 +37,7 @@
    
       
       <button type="submit" class="btn btn-success btn-lg px-3 text-light">Actualizar</button>
-      <a href="/index"><button type="button" class="btn btn-danger btn-lg px-3 text-light">Cancelar</button></a>
+      <a href="/"><button type="button" class="btn btn-danger btn-lg px-3 text-light">Cancelar</button></a>
       
 </div>
 </div>
