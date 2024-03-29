@@ -9,6 +9,7 @@ from django.db.models import Sum
 import sys
 from django.views.decorators.csrf import csrf_exempt
 import json
+import datetime
 # Create your views here.
 
 #-------------22/04/23----- Manuel y Felipe----->
@@ -63,16 +64,19 @@ def saldo_disponible(user):
     user_id = user.id
     #esto devuelve el total de montos de transacciones etiquetas como depositos
     #esto devuelve el total de montos de transacciones etiquetas como gastos
-    gastos = Transaction.objects.filter(user_id=user_id, type='spend').aggregate(Sum('amount'))['amount__sum'] or 0
-    budget = user.budget - gastos
+    month = datetime.date.today().month
+    gastos = Transaction.objects.filter(user_id=user_id, type='spend', date__month=month).exclude(description = "Transferencia interna").aggregate(Sum('amount'))['amount__sum'] or 0
+    ingresos = Transaction.objects.filter(user_id=user_id, type='deposit', date__month=month).exclude(description = "Transferencia interna").aggregate(Sum('amount'))['amount__sum'] or 0
+    budget = user.budget - gastos + ingresos
     #devuelve la resta entre depositos y gastos
     return budget, gastos
 
 #Funcion auxiliar que devuelve el saldo de una categoria específica de un usuario
 def saldo_categoría(user_id, cat):
     budget = cat.budget
-    gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
-    ingresos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat).aggregate(Sum('amount'))['amount__sum'] or 0
+    month = datetime.date.today().month
+    gastos = Transaction.objects.filter(user_id=user_id, type='spend', category=cat, date__month=month).aggregate(Sum('amount'))['amount__sum'] or 0
+    ingresos = Transaction.objects.filter(user_id=user_id, type='deposit', category=cat, date__month=month).aggregate(Sum('amount'))['amount__sum'] or 0
     saldo = budget - gastos + ingresos
     return {'name': cat.name, "id": cat.id, 'amount': saldo, 'valid': (saldo >= 0)}
 
@@ -135,7 +139,7 @@ def list_transactions(request):
         # Obtener parámetros de fecha seleccionados
         start_date = request.GET.get('start_date')
         end_date = request.GET.get('end_date')
-
+        month = datetime.date.today().month
         if selected_cats:
             for cat_id in selected_cats:
                 cat = Category.objects.get(id=cat_id)
@@ -145,6 +149,8 @@ def list_transactions(request):
                 if start_date and end_date:
                     # Filtrar transacciones por rango de fecha
                     trans = trans.filter(date__range=[start_date, end_date])
+                else:
+                    trans = trans.filter(date__month = month)
 
                 transactions.append({'name': cat.name, 'trans': trans})
 
@@ -156,6 +162,8 @@ def list_transactions(request):
                 if start_date and end_date:
                     # Filtrar transacciones por rango de fecha
                     trans = trans.filter(date__range=[start_date, end_date])
+                else:
+                    trans = trans.filter(date__month = month)
 
                 transactions.append({'name': cat.name, 'trans': trans})
                 
