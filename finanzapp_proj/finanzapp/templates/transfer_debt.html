@@ -6,7 +6,7 @@
       <div class="row py-5">
         <div class="col-md-9 m-auto">
 
-      <h2>Transfiere tu deuda: {{ saldo_cat.amount|floatformat:0|intcomma }}</h2>
+      <h2>Transfiere un monto desde {{ cat_name }} ({{ saldo_cat.amount|floatformat:0|intcomma }})</h2>
 
   <form class="p-4" style="background-color: #ffffff;" action="/transferDebt/{{ category }}" method="post">
       {% csrf_token %}

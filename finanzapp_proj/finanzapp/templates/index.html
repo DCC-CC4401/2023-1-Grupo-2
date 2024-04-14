@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load static %}
 {% block content %}
 <section class="container py-5 rounded">
     <section class="container py-5 rounded">
@@ -82,15 +83,18 @@
                                     <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #69bb7e;" onclick="window.location='{% url 'list' %}?categories={{ budget.id }}';">
                                             <h2 class="h4 mt-4 text-center">{{budget.name}}:</h3>
                                             <h4 class="h5 mt-4 text-center">Saldo: {{budget.amount|floatformat:0|intcomma}}</h4>
-                                    </div>
+                                            <a href="/transferDebt/{{ budget.id }}">
+                                                <img src="{% static 'img/exchange_icon.png' %}" width="60" height="60">
+                                            </a>                                                
+                                        </div>
                                 
                                 {% else %}
                                     <div class="h-100 py-4 px-3 shadow rounded" style="background-color: #aa4a4a;" onclick="window.location='{% url 'list' %}?categories={{ budget.id }}';">
                                             <h2 class="h4 mt-4 text-center">{{budget.name}}:</h2>
                                             <h4 class="h5 mt-4 text-center">Saldo: {{budget.amount|floatformat:0|intcomma}}</h4>
-                                            {% if positive%}
-                                                <td><a class="btn btn-warning" href="/transferDebt/{{ budget.id }}">Trasferir</a></td>
-                                            {% endif %}
+                                            <a href="/transferDebt/{{ budget.id }}">
+                                                <img src="{% static 'img/exchange_icon.png' %}" width="60" height="60">
+                                            </a>
                                     </div>
                                 
                                 {% endif %}

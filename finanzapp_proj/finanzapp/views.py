@@ -347,28 +347,33 @@ def transfer_debt(request, id_categoria):
             saldo_cat = saldo_categoría(user_id, category)
             positive_cats = {}
             for c in categories:
-                saldo = saldo_categoría(user_id, c)
-                if saldo["amount"]> 0 and c.name != "ninguna":
+                if c.name != "ninguna" and c.name != category.name:
+                    saldo = saldo_categoría(user_id, c)
                     positive_cats[c.name] = {}
                     positive_cats[c.name]["cat"] = c
                     positive_cats[c.name]["saldo"] = saldo['amount']
-            context = {"category": id_categoria, "categories": positive_cats, "saldo_cat": saldo_cat}
+            context = {"category": id_categoria, "cat_name": category.name, "categories": positive_cats, "saldo_cat": saldo_cat}
             return render(request, 'transfer_debt.html', context)
         elif request.method == "POST":
             # Si se tienen como campos a name y budget, es el formulario de categoría
             user_id= request.user.id
             categories = Category.objects.filter(user = user_id)
             category = Category.objects.filter(user = user_id, id = id_categoria).first()
+            saldo_cat = saldo_categoría(user_id, category)
             modifications = request.POST.getlist('amount')
             i = 0
             for c in categories:
-                if c.name != 'ninguna':
+                if c.name != "ninguna" and c.name != category.name:
                     saldo = saldo_categoría(user_id, c)
-                    if saldo["amount"]> 0:
-                        if modifications[i]:
-                            transaction = Transaction.objects.create(user=request.user, type="spend", description="Transferencia interna", amount=int(modifications[i]), date=timezone.now().strftime("%Y-%m-%d"), category=c)
-                            transaction = Transaction.objects.create(user=request.user, type="deposit", description="Transferencia interna", amount=int(modifications[i]), date=timezone.now().strftime("%Y-%m-%d"), category=category)
-                        i+=1
+                    if modifications[i]:
+                        if int(modifications[i]) < 0:
+                            _ = Transaction.objects.create(user=request.user, type="spend", description="Transferencia interna", amount=(-int(modifications[i])), date=timezone.now().strftime("%Y-%m-%d"), category=c)
+                            _ = Transaction.objects.create(user=request.user, type="deposit", description="Transferencia interna", amount=(-int(modifications[i])), date=timezone.now().strftime("%Y-%m-%d"), category=category)
+                        else:
+                            _ = Transaction.objects.create(user=request.user, type="deposit", description="Transferencia interna", amount=int(modifications[i]), date=timezone.now().strftime("%Y-%m-%d"), category=c)
+                            _ = Transaction.objects.create(user=request.user, type="spend", description="Transferencia interna", amount=int(modifications[i]), date=timezone.now().strftime("%Y-%m-%d"), category=category)
+                    i+=1
+                    
             return redirect('/')
     else:
         return redirect('login')
